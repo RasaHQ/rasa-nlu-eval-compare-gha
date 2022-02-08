@@ -1,7 +1,7 @@
 name: 'Rasa NLU Evaluation Results Comparison'
 description: 'A GitHub action to compare Rasa NLU Evaluation results'
 inputs:
-  result_files:
+  nlu_result_files:
     description: |
       The json report files that should be compared and the labels to associate with each of them. The report from which
       diffs should be calculated should be listed first. All results must be of the same type (e.g. intent classification,
@@ -74,7 +74,7 @@ runs:
       shell: bash
       run: |
         python compare_nlu_results.py \
-            --result_files=${{ inputs.result_files }} \
+            --nlu_result_files=${{ inputs.nlu_result_files }} \
             --table_title=${{ inputs.table_title }} \
             --lable_name=${{ inputs.label_name }} \
             --html_outfile=${{ inputs.html_outfile }} \
