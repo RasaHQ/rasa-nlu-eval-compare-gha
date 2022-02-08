@@ -66,6 +66,10 @@ runs:
       uses: actions/setup-python@v1
       with:
         python-version: '3.8'
+    - name: What's in this dir?
+      run: |
+        echo $(ls)
+      shell: bash
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
