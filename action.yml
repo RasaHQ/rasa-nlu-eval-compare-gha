@@ -11,7 +11,7 @@ inputs:
       Results"`
     required: true
     default: |
-      previous_results/intent_report.json="Previous" current_results/intent_report.json="New"
+      previous_results/intent_report.json="Previous" results/intent_report.json="New"
   table_title:
     description: Title of HTML table.
     required: false
@@ -21,7 +21,7 @@ inputs:
     required: false
     default: label
   html_outfile:
-    description: File to which to write HTML table. File will be overwritten unless `append_table` is `true`.
+    description: File to which to write HTML table. File will be overwritten unless `append_table` is specified.
     required: false
     default: formatted_compared_results.html
   append_table:
@@ -47,7 +47,7 @@ inputs:
     default: support
   display_only_diff:
     description: |
-      Display only labels with a change in at least one metric from the first listed result set. 
+      Display only labels with a change in at least one metric from the first listed result set. Default is false.
     required: false
 
 branding:
