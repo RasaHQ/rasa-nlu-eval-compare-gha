@@ -84,13 +84,13 @@ runs:
     - name: Set argument string
       run: |
             echo "ARGS=--nlu_result_files ${{ inputs.nlu_result_files }} \
-            --table_title ${{ inputs.table_title }} \
-            --label_name ${{ inputs.label_name }} \
-            --html_outfile ${{ inputs.html_outfile }} \
-            --json_outfile ${{ inputs.json_outfile }} \
-            --metrics_to_diff ${{ inputs.metrics_to_diff }} \
-            --metrics_to_display ${{ inputs.metrics_to_display }} \
-            --sort_by_metric ${{ inputs.sort_by_metric }} \
+            --table_title "${{ inputs.table_title }}" \
+            --label_name "${{ inputs.label_name }}" \
+            --html_outfile "${{ inputs.html_outfile }}" \
+            --json_outfile "${{ inputs.json_outfile }}" \
+            --metrics_to_diff "${{ inputs.metrics_to_diff }}" \
+            --metrics_to_display "${{ inputs.metrics_to_display }}" \
+            --sort_by_metric "${{ inputs.sort_by_metric }}" \
             ${{ env.APPEND_TABLE }} \
             ${{ env.DISPLAY_ONLY_DIFF }}" >> $GITHUB_ENV
       shell: bash 
