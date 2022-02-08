@@ -97,4 +97,4 @@ runs:
     - name: Run cross-val comparison for intents
       shell: bash
       run: |
-        python "${{ github.action_path }}"/compare_nlu_results.py "${{ env.ARGS }}"
+        python ${{ github.action_path }}/compare_nlu_results.py ${{ env.ARGS }}
