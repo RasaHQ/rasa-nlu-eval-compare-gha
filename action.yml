@@ -66,6 +66,10 @@ runs:
       uses: actions/setup-python@v1
       with:
         python-version: '3.8'
+    - run: |
+        echo "${{ github.action_path }}" >> $GITHUB_PATH
+        echo "${{ github.action_path }}"
+      shell: bash 
     - name: What's in this dir?
       run: |
         echo $(ls)
