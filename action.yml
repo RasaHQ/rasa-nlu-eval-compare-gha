@@ -7,11 +7,11 @@ inputs:
       diffs should be calculated should be listed first. All results must be of the same type (e.g. intent classification,
       entity extraction). Labels for files should be unique.For example: `intent_report.json=1 second_intent_report.json=2`. Do
       not put spaces before or after the = sign. Label values with spaces should be put in double quotes. For example:
-      `previous_results/DIETClassifier_report.json="Previous Stable Results" results/DIETClassifier_report.json="New
+      `previous_results/DIETClassifier_report.json="Previous Stable Results" current_results/DIETClassifier_report.json="New
       Results"`
     required: true
     default: |
-      previous_results/DIETClassifier_report.json="Previous Results" results/DIETClassifier_report.json="New Results"
+      previous_results/intent_report.json="Previous" current_results/intent_report.json="New"
   table_title:
     description: Title of HTML table.
     required: false
@@ -80,13 +80,13 @@ runs:
     - name: Set boolean options
       run: |
         case "${{ inputs.append_table }}" in
-            "") echo "APPEND_TABLE=--append_table" >> $GITHUB_ENV ;;
-            *) echo "APPEND_TABLE=''" >> $GITHUB_ENV ;;
+            "") echo "APPEND_TABLE=''" >> $GITHUB_ENV ;;
+            *) echo "APPEND_TABLE=--append_table" >> $GITHUB_ENV ;;
         esac
 
         case "${{ inputs.display_only_diff }}" in
-           "") echo "DISPLAY_ONLY_DIFF=--display_only_diff" >> $GITHUB_ENV ;;
-            *) echo "DISPLAY_ONLY_DIFF=''" >> $GITHUB_ENV ;;
+           "") echo "DISPLAY_ONLY_DIFF=''" >> $GITHUB_ENV ;;
+            *) echo "DISPLAY_ONLY_DIFF=--display_only_diff" >> $GITHUB_ENV ;;
         esac
       shell: bash
     - name: Run cross-val comparison for intents
@@ -95,7 +95,7 @@ runs:
         python "${{ github.action_path }}"/compare_nlu_results.py \
             --nlu_result_files=${{ inputs.nlu_result_files }} \
             --table_title=${{ inputs.table_title }} \
-            --lable_name=${{ inputs.label_name }} \
+            --label_name=${{ inputs.label_name }} \
             --html_outfile=${{ inputs.html_outfile }} \
             --json_outfile=${{ inputs.json_outfile }} \
             --metrics_to_diff=${{ inputs.metrics_to_diff }} \
