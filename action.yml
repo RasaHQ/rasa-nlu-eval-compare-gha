@@ -29,7 +29,6 @@ inputs:
       Whether to append the comparison table to the html output file, instead of overwriting it. 
       If not specified, html_outfile will be overwritten.
     required: false
-    default: "false"
   json_outfile:
     description: File to which to write combined json report (contents of all result files).
     required: false
@@ -49,9 +48,7 @@ inputs:
   display_only_diff:
     description: |
       Display only labels with a change in at least one metric from the first listed result set. 
-      If not specified, all labels will be displayed.
     required: false
-    default: "false"
 
 branding:
   icon: 'message-square'  
@@ -82,16 +79,15 @@ runs:
       shell: bash
     - name: Set boolean options
       run: |
-        if [ "${{ inputs.append_table }}" = "true" ]; then
-            echo "APPEND_TABLE=--append_table" >> $GITHUB_ENV
-        else
-            echo "APPEND_TABLE=''" >> $GITHUB_ENV
-        fi
-        if [ "${{ inputs.display_only_diff }}" = "true" ]; then
-            echo "DISPLAY_ONLY_DIFF=--display_only_diff" >> $GITHUB_ENV
-        else
-            echo "DISPLAY_ONLY_DIFF=''" >> $GITHUB_ENV
-        fi
+        case "${{ inputs.append_table }}" in
+            "") echo "APPEND_TABLE=--append_table" >> $GITHUB_ENV ;;
+            *) echo "APPEND_TABLE=''" >> $GITHUB_ENV ;;
+        esac
+
+        case "${{ inputs.display_only_diff }}" in
+           "") echo "DISPLAY_ONLY_DIFF=--display_only_diff" >> $GITHUB_ENV ;;
+            *) echo "DISPLAY_ONLY_DIFF=''" >> $GITHUB_ENV ;;
+        esac
       shell: bash
     - name: Run cross-val comparison for intents
       shell: bash
