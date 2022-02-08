@@ -93,7 +93,6 @@ runs:
       shell: bash
       run: |
         python "${{ github.action_path }}"/compare_nlu_results.py \
-            --nlu_result_files=${{ inputs.nlu_result_files }} \
             --table_title=${{ inputs.table_title }} \
             --label_name=${{ inputs.label_name }} \
             --html_outfile=${{ inputs.html_outfile }} \
@@ -103,3 +102,4 @@ runs:
             --sort_by_metric=${{ inputs.sort_by_metric }} \
             "${{ env.APPEND_TABLE }}" \
             "${{ env.DISPLAY_ONLY_DIFF }}" \
+            --nlu_result_files=${{ inputs.nlu_result_files }}
