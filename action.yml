@@ -65,14 +65,6 @@ runs:
       uses: actions/setup-python@v1
       with:
         python-version: '3.8'
-    - run: |
-        echo "${{ github.action_path }}" >> $GITHUB_PATH
-        ls "${{ github.action_path }}"
-      shell: bash 
-    - name: What's in this dir?
-      run: |
-        echo $(ls)
-      shell: bash
     - name: Install dependencies
       run: |
         pip install -r "${{ github.action_path }}"/requirements.txt
@@ -89,6 +81,18 @@ runs:
             *) echo "DISPLAY_ONLY_DIFF=--display_only_diff" >> $GITHUB_ENV ;;
         esac
       shell: bash
+    - run: |
+            echo --table_title=${{ inputs.table_title }} \
+            --label_name=${{ inputs.label_name }} \
+            --html_outfile=${{ inputs.html_outfile }} \
+            --json_outfile=${{ inputs.json_outfile }} \
+            --metrics_to_diff=${{ inputs.metrics_to_diff }} \
+            --metrics_to_display=${{ inputs.metrics_to_display }} \
+            --sort_by_metric=${{ inputs.sort_by_metric }} \
+            "${{ env.APPEND_TABLE }}" \
+            "${{ env.DISPLAY_ONLY_DIFF }}" \
+            --nlu_result_files=${{ inputs.nlu_result_files }}
+      shell: bash 
     - name: Run cross-val comparison for intents
       shell: bash
       run: |
