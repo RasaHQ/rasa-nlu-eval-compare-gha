@@ -57,10 +57,6 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Checkout pull request HEAD commit instead of merge commit
-      uses: actions/checkout@v2
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
     - name: Setup python
       uses: actions/setup-python@v1
       with:
@@ -81,20 +77,7 @@ runs:
             *) echo "DISPLAY_ONLY_DIFF=--display_only_diff" >> $GITHUB_ENV ;;
         esac
       shell: bash
-    - name: Set argument string
-      run: |
-            echo "ARGS=--nlu_result_files ${{ inputs.nlu_result_files }} \
-            --table_title "${{ inputs.table_title }}" \
-            --label_name "${{ inputs.label_name }}" \
-            --html_outfile "${{ inputs.html_outfile }}" \
-            --json_outfile "${{ inputs.json_outfile }}" \
-            --metrics_to_diff "${{ inputs.metrics_to_diff }}" \
-            --metrics_to_display "${{ inputs.metrics_to_display }}" \
-            --sort_by_metric "${{ inputs.sort_by_metric }}" \
-            ${{ env.APPEND_TABLE }} \
-            ${{ env.DISPLAY_ONLY_DIFF }}" >> $GITHUB_ENV
-      shell: bash 
-    - name: Run cross-val comparison for intents
+    - name: Run Result Comparison
       shell: bash
       run: |
         python ${{ github.action_path }}/compare_nlu_results.py \
