@@ -107,4 +107,4 @@ runs:
             --metrics_to_display "${{ inputs.metrics_to_display }}" \
             --sort_by_metric "${{ inputs.sort_by_metric }}" \
             ${{ env.APPEND_TABLE }} \
-            ${{ env.DISPLAY_ONLY_DIFF }}"
+            ${{ env.DISPLAY_ONLY_DIFF }}
