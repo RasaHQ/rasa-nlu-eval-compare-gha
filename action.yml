@@ -72,38 +72,39 @@ runs:
     - name: Set boolean options
       run: |
         case "${{ inputs.append_table }}" in
-            "") echo "APPEND_TABLE=''" >> $GITHUB_ENV ;;
+            "") echo "APPEND_TABLE=" >> $GITHUB_ENV ;;
             *) echo "APPEND_TABLE=--append_table" >> $GITHUB_ENV ;;
         esac
 
         case "${{ inputs.display_only_diff }}" in
-           "") echo "DISPLAY_ONLY_DIFF=''" >> $GITHUB_ENV ;;
+           "") echo "DISPLAY_ONLY_DIFF=" >> $GITHUB_ENV ;;
             *) echo "DISPLAY_ONLY_DIFF=--display_only_diff" >> $GITHUB_ENV ;;
         esac
       shell: bash
     - run: |
-            echo --table_title=${{ inputs.table_title }} \
-            --label_name=${{ inputs.label_name }} \
-            --html_outfile=${{ inputs.html_outfile }} \
-            --json_outfile=${{ inputs.json_outfile }} \
-            --metrics_to_diff=${{ inputs.metrics_to_diff }} \
-            --metrics_to_display=${{ inputs.metrics_to_display }} \
-            --sort_by_metric=${{ inputs.sort_by_metric }} \
+            echo \
+            --table_title ${{ inputs.table_title }} \
+            --label_name ${{ inputs.label_name }} \
+            --html_outfile ${{ inputs.html_outfile }} \
+            --json_outfile ${{ inputs.json_outfile }} \
+            --metrics_to_diff ${{ inputs.metrics_to_diff }} \
+            --metrics_to_display ${{ inputs.metrics_to_display }} \
+            --sort_by_metric ${{ inputs.sort_by_metric }} \
             "${{ env.APPEND_TABLE }}" \
             "${{ env.DISPLAY_ONLY_DIFF }}" \
-            --nlu_result_files=${{ inputs.nlu_result_files }}
+            --nlu_result_files ${{ inputs.nlu_result_files }}
       shell: bash 
     - name: Run cross-val comparison for intents
       shell: bash
       run: |
         python "${{ github.action_path }}"/compare_nlu_results.py \
-            --table_title=${{ inputs.table_title }} \
-            --label_name=${{ inputs.label_name }} \
-            --html_outfile=${{ inputs.html_outfile }} \
-            --json_outfile=${{ inputs.json_outfile }} \
-            --metrics_to_diff=${{ inputs.metrics_to_diff }} \
-            --metrics_to_display=${{ inputs.metrics_to_display }} \
-            --sort_by_metric=${{ inputs.sort_by_metric }} \
+            --table_title ${{ inputs.table_title }} \
+            --label_name ${{ inputs.label_name }} \
+            --html_outfile ${{ inputs.html_outfile }} \
+            --json_outfile ${{ inputs.json_outfile }} \
+            --metrics_to_diff ${{ inputs.metrics_to_diff }} \
+            --metrics_to_display ${{ inputs.metrics_to_display }} \
+            --sort_by_metric ${{ inputs.sort_by_metric }} \
             "${{ env.APPEND_TABLE }}" \
             "${{ env.DISPLAY_ONLY_DIFF }}" \
-            --nlu_result_files=${{ inputs.nlu_result_files }}
+            --nlu_result_files ${{ inputs.nlu_result_files }}
