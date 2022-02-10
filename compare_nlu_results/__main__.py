@@ -4,8 +4,8 @@ from typing import List, Optional, Text
 
 import pandas as pd
 
-from compare_nlu_results.nlu_result_dataframes import ResultSetDiffDf
-from compare_nlu_results.nlu_results import (
+from compare_nlu_results.dataframes import ResultSetDiffDf
+from compare_nlu_results.results import (
     NamedResultFile,
     EvaluationResult,
     EvaluationResultSet,
