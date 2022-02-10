@@ -41,7 +41,7 @@ inputs:
     description: Metrics to display in resulting HTML table.
     required: false
     default: support f1-score
-  sort_by_metric:
+  metric_to_sort_by:
     description: Metrics to sort by (descending) in resulting HTML table.
     required: false
     default: support
@@ -89,6 +89,6 @@ runs:
             --json_outfile "${{ inputs.json_outfile }}" \
             --metrics_to_diff ${{ inputs.metrics_to_diff }} \
             --metrics_to_display ${{ inputs.metrics_to_display }} \
-            --sort_by_metric "${{ inputs.sort_by_metric }}" \
+            --metric_to_sort_by "${{ inputs.metric_to_sort_by }}" \
             ${{ env.APPEND_TABLE }} \
             ${{ env.DISPLAY_ONLY_DIFF }}
