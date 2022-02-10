@@ -1,0 +1,232 @@
+{
+  "inform": {
+    "precision": {
+      "Stable": 1.0,
+      "Incoming": 0.5
+    },
+    "recall": {
+      "Stable": 1.0,
+      "Incoming": 0.6666666666666666
+    },
+    "f1-score": {
+      "Stable": 1.0,
+      "Incoming": 0.5714285714285715
+    },
+    "support": {
+      "Stable": 6,
+      "Incoming": 6
+    },
+    "confused_with": {
+      "Stable": {},
+      "Incoming": {
+        "greet": 2
+      }
+    }
+  },
+  "deny": {
+    "precision": {
+      "Stable": 0.0,
+      "Incoming": 0.5
+    },
+    "recall": {
+      "Stable": 0.0,
+      "Incoming": 1.0
+    },
+    "f1-score": {
+      "Stable": 0.0,
+      "Incoming": 0.6666666666666666
+    },
+    "support": {
+      "Stable": 2,
+      "Incoming": 2
+    },
+    "confused_with": {
+      "Stable": {
+        "mood_unhappy": 1,
+        "greet": 1
+      },
+      "Incoming": {}
+    }
+  },
+  "goodbye": {
+    "precision": {
+      "Stable": 0.375,
+      "Incoming": 0.6666666666666666
+    },
+    "recall": {
+      "Stable": 0.2727272727272727,
+      "Incoming": 0.5454545454545454
+    },
+    "f1-score": {
+      "Stable": 0.3157894736842105,
+      "Incoming": 0.6
+    },
+    "support": {
+      "Stable": 11,
+      "Incoming": 11
+    },
+    "confused_with": {
+      "Stable": {
+        "greet": 5,
+        "mood_unhappy": 2
+      },
+      "Incoming": {
+        "greet": 3,
+        "inform": 1
+      }
+    }
+  },
+  "mood_great": {
+    "precision": {
+      "Stable": 0.75,
+      "Incoming": 0.6666666666666666
+    },
+    "recall": {
+      "Stable": 0.6,
+      "Incoming": 0.4
+    },
+    "f1-score": {
+      "Stable": 0.6666666666666665,
+      "Incoming": 0.5
+    },
+    "support": {
+      "Stable": 5,
+      "Incoming": 5
+    },
+    "confused_with": {
+      "Stable": {
+        "mood_unhappy": 1,
+        "greet": 1
+      },
+      "Incoming": {
+        "mood_unhappy": 2,
+        "greet": 1
+      }
+    }
+  },
+  "bot_challenge": {
+    "precision": {
+      "Stable": 0.6666666666666666,
+      "Incoming": 1.0
+    },
+    "recall": {
+      "Stable": 1.0,
+      "Incoming": 0.5
+    },
+    "f1-score": {
+      "Stable": 0.8,
+      "Incoming": 0.6666666666666666
+    },
+    "support": {
+      "Stable": 4,
+      "Incoming": 4
+    },
+    "confused_with": {
+      "Stable": {},
+      "Incoming": {
+        "inform": 1,
+        "goodbye": 1
+      }
+    }
+  },
+  "greet": {
+    "precision": {
+      "Stable": 0.5333333333333333,
+      "Incoming": 0.5882352941176471
+    },
+    "recall": {
+      "Stable": 0.6153846153846154,
+      "Incoming": 0.7692307692307693
+    },
+    "f1-score": {
+      "Stable": 0.5714285714285715,
+      "Incoming": 0.6666666666666667
+    },
+    "support": {
+      "Stable": 13,
+      "Incoming": 13
+    },
+    "confused_with": {
+      "Stable": {
+        "goodbye": 3,
+        "mood_great": 1
+      },
+      "Incoming": {
+        "mood_unhappy": 1,
+        "goodbye": 1
+      }
+    }
+  },
+  "mood_unhappy": {
+    "precision": {
+      "Stable": 0.7333333333333333,
+      "Incoming": 0.75
+    },
+    "recall": {
+      "Stable": 0.7857142857142857,
+      "Incoming": 0.6428571428571429
+    },
+    "f1-score": {
+      "Stable": 0.7586206896551724,
+      "Incoming": 0.6923076923076924
+    },
+    "support": {
+      "Stable": 14,
+      "Incoming": 14
+    },
+    "confused_with": {
+      "Stable": {
+        "goodbye": 2,
+        "bot_challenge": 1
+      },
+      "Incoming": {
+        "inform": 2,
+        "mood_great": 1
+      }
+    }
+  },
+  "macro avg": {
+    "precision": {
+      "Stable": 0.5797619047619047,
+      "Incoming": 0.6673669467787114
+    },
+    "recall": {
+      "Stable": 0.6105465962608819,
+      "Incoming": 0.646315589172732
+    },
+    "f1-score": {
+      "Stable": 0.5875007716335173,
+      "Incoming": 0.6233908948194663
+    },
+    "support": {
+      "Stable": 55.0,
+      "Incoming": 55.0
+    },
+    "confused_with": {
+      "Stable": NaN,
+      "Incoming": NaN
+    }
+  },
+  "weighted avg": {
+    "precision": {
+      "Stable": 0.6134848484848485,
+      "Incoming": 0.6693404634581105
+    },
+    "recall": {
+      "Stable": 0.6363636363636364,
+      "Incoming": 0.6363636363636364
+    },
+    "f1-score": {
+      "Stable": 0.6192050659564271,
+      "Incoming": 0.6343190143190144
+    },
+    "support": {
+      "Stable": 55.0,
+      "Incoming": 55.0
+    },
+    "confused_with": {
+      "Stable": NaN,
+      "Incoming": NaN
+    }
+  }
+}

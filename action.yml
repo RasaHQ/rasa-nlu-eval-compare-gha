@@ -80,7 +80,7 @@ runs:
     - name: Run Result Comparison
       shell: bash
       run: |
-        export PYTHONPATH=$PYTHONPATH:${{ github.action_path }}/compare_nlu_results
+        export PYTHONPATH=$PYTHONPATH:${{ github.action_path }}
         python -m compare_nlu_results \
             --nlu_result_files ${{ inputs.nlu_result_files }} \
             --table_title "${{ inputs.table_title }}" \
