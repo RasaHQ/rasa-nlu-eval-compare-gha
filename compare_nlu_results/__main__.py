@@ -154,6 +154,11 @@ def create_argument_parser() -> argparse.ArgumentParser:
 
     return parser
 
+def compare():
+    pass
+
+def alarm():
+    pass
 
 def main():
     parser = create_argument_parser()
