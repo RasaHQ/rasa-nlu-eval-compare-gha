@@ -159,6 +159,15 @@ def create_argument_parser() -> argparse.ArgumentParser:
         action="store_true",
     )
 
+    parser.add_argument(
+        "--style_table",
+        help=(
+            "Adds CSS style tags to table to highlight changed values. "
+            "Not compatible with Github Markdown format. Default is False."
+        ),
+        action="store_true",
+    )
+
     return parser
 
 
@@ -198,7 +207,7 @@ def main():
                 f"differences in at least one of the following metrics: "
                 f"{args.metrics_to_diff} are displayed.</body>"
             )
-        fh.write(table.get_table(styled=False))
+        fh.write(table.get_table(styled=args.style_table))
 
     combined_results.write_json_report_to_file(args.json_outfile)
 
