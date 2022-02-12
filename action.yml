@@ -18,16 +18,6 @@ inputs:
     description: File to which to write HTML table. File will be overwritten unless `append_table` is specified.
     required: false
     default: formatted_compared_results.html
-  append_table:
-    description: |
-      Whether to append the comparison table to the html output file, instead of overwriting it. 
-      If not specified, html_outfile will be overwritten.
-    required: false
-  style_table:
-    description: |
-      Whether to add CSS style tags to the html table to highlight changed values. 
-      Not compatible with Github Markdown format. Default is False.
-    required: false
   table_title:
     description: Title of HTML table.
     required: false
@@ -52,6 +42,16 @@ inputs:
     description: |
       Display only labels with a change in at least one metric from the first listed result set. Default is false.
     required: false
+  append_table:
+    description: |
+      Whether to append the comparison table to the html output file, instead of overwriting it. 
+      If `true` not specified, html_outfile will be overwritten.
+    required: false
+  style_table:
+    description: |
+      Whether to add CSS style tags to the html table to highlight changed values. 
+      Not compatible with Github Markdown format. Set to `true` to use.
+    required: false
 
 branding:
   icon: 'message-square'  
@@ -70,11 +70,9 @@ runs:
       shell: bash
     - name: Set boolean options
       run: |
-        tr "[:upper:]" "[:lower:]" <<< "${{ inputs.append_table }}"
-
         case "$(tr "[:upper:]" "[:lower:]" <<< "${{ inputs.append_table }}")" in
-            "true") export "APPEND_TABLE=--append_table" ;;
-            *) export "APPEND_TABLE="  ;;
+            "true") echo "APPEND_TABLE=--append_table" >> $GITHUB_ENV ;;
+            *) echo "APPEND_TABLE=" >> $GITHUB_ENV ;;
         esac
 
         case "$(tr "[:upper:]" "[:lower:]" <<< "${{ inputs.display_only_diff }}")" in
