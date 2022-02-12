@@ -170,19 +170,17 @@ def main():
         for filepath, name in parse_cli_arg_pairs(args.nlu_result_files)
     ]
     base_result_set_name = nlu_result_files[0].name
+
     combined_results = combine_results(
         nlu_result_files=nlu_result_files, label_name=args.label_name
-    )
-    EvaluationResultSet.write_json_report_to_file(
-        combined_results.report, args.json_outfile
     )
     diff_df = ResultSetDiffDf.from_df(
         combined_results.df, base_result_set_name, args.metrics_to_diff
     )
-    combined_diffed_df = pd.concat([combined_results.df, diff_df], axis=1)
 
     table = ResultSetDiffTable(
-        df_for_table=combined_diffed_df,
+        result_set_df=combined_results.df,
+        diff_df=diff_df,
         metrics_to_display=args.metrics_to_display,
         metric_to_sort_by=args.metric_to_sort_by,
         display_only_diff=args.display_only_diff,
@@ -201,6 +199,8 @@ def main():
                 f"{args.metrics_to_diff} are displayed.</body>"
             )
         fh.write(table.styled_table)
+
+    combined_results.write_json_report_to_file(args.json_outfile)
 
 
 if __name__ == "__main__":
