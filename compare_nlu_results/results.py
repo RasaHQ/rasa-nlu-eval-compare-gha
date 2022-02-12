@@ -33,7 +33,7 @@ class EvaluationResult:
         self.report = self.load_json_report_from_file(json_report_filepath)
         self.name = name
         self.label_name = label_name
-        self.df = self.convert_report_to_df(self.report)
+        self.df = self.convert_report_to_df(self.report, label_name)
 
     @classmethod
     def load_json_report_from_file(cls, filepath: Text) -> Dict:
@@ -60,34 +60,11 @@ class EvaluationResult:
         return report
 
     @classmethod
-    def convert_report_to_df(cls, report: Dict) -> ResultDf:
+    def convert_report_to_df(cls, report: Dict, label_name: Text = "label") -> ResultDf:
         """Convert dict representation to dataframe"""
         df = ResultDf(pd.DataFrame.from_dict(report).transpose())
-        df.clean()
+        df.clean(label_name=label_name)
         return df
-
-    @classmethod
-    def create_html_table(
-        cls,
-        df: ResultDf,
-        columns: Optional[List[Text]] = None,
-        labels: Optional[List[Text]] = None,
-        metric_to_sort_by: Text = "support",
-    ) -> Text:
-        """
-        Create an HTML table of the results sorted by the metric specified.
-
-        If `columns` or `labels` is provided, only those columns/rows will be
-        included. Otherwise all columns/rows will be included.
-        """
-        labels = df.get_sorted_labels(metric_to_sort_by=metric_to_sort_by, labels=labels)
-        if not columns:
-            columns = df.columns
-        df_for_table = df.loc[labels, columns]
-        df_for_table.columns.set_names([None], inplace=True)
-        df_for_table.index.set_names([None], inplace=True)
-        html_table = df_for_table.to_html(na_rep="N/A")
-        return html_table
 
 
 class EvaluationResultSet(EvaluationResult):
@@ -107,12 +84,14 @@ class EvaluationResultSet(EvaluationResult):
             result_sets = []
         self.result_sets = result_sets
         self.label_name = label_name
-        self.df = self.convert_result_sets_to_df(self.result_sets)
+        self.df = self.convert_result_sets_to_df(self.result_sets, label_name)
         self.report = self.convert_df_to_report(self.df)
 
     @classmethod
     def convert_result_sets_to_df(
-        cls, result_sets: Optional[List[EvaluationResult]] = None
+        cls,
+        result_sets: Optional[List[EvaluationResult]] = None,
+        label_name: Text = "label",
     ) -> ResultSetDf:
         """Combine multiple sets of evaluation results into a single dataframe"""
         if not result_sets:
@@ -127,7 +106,7 @@ class EvaluationResultSet(EvaluationResult):
             )
             joined_df.columns = joined_df.columns.swaplevel()
             joined_df = ResultSetDf(joined_df)
-            joined_df.clean()
+            joined_df.clean(label_name=label_name)
         return joined_df
 
     @classmethod
@@ -144,7 +123,7 @@ class EvaluationResultSet(EvaluationResult):
         return report
 
     @classmethod
-    def convert_report_to_df(cls, report: Dict) -> ResultSetDf:
+    def convert_report_to_df(cls, report: Dict, label_name="label") -> ResultSetDf:
         """Load dataframe from dict report."""
         joined_df = pd.DataFrame.from_dict(
             {
@@ -155,7 +134,7 @@ class EvaluationResultSet(EvaluationResult):
             orient="index",
         ).unstack()
         joined_df = ResultSetDf(joined_df)
-        joined_df.clean()
+        joined_df.clean(label_name=label_name)
         return joined_df
 
     @classmethod
@@ -170,29 +149,3 @@ class EvaluationResultSet(EvaluationResult):
             result.report = result.convert_df_to_report()
             result_sets.append(result)
         return result_sets
-
-    @classmethod
-    def create_html_table(
-        cls,
-        df: ResultSetDf,
-        columns: Optional[List[Text]] = None,
-        labels: Optional[List[Text]] = None,
-        metric_to_sort_by: Text = "support",
-    ) -> Text:
-        """Create an HTML table of the combined results sorted by the metric specified.
-
-        If `columns` or `labels` is
-        provided, only those columns/rows will be included. Otherwise all
-        columns/rows will be included.
-        """
-
-        labels = df.get_sorted_labels(
-            metric_to_sort_by=metric_to_sort_by, labels=labels
-        )
-        if not columns:
-            columns = df.columns
-        df_for_table = df.loc[labels, columns]
-        df_for_table.columns.set_names([None, None], inplace=True)
-        df_for_table.index.set_names([None], inplace=True)
-        html_table = df_for_table.to_html(na_rep="N/A")
-        return html_table

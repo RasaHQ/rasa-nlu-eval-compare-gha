@@ -1,5 +1,6 @@
 import argparse
 import logging
+from math import comb
 from typing import List, Optional, Text
 
 import pandas as pd
@@ -10,6 +11,8 @@ from compare_nlu_results.results import (
     EvaluationResult,
     EvaluationResultSet,
 )
+from compare_nlu_results.tables import ResultSetDiffTable
+
 
 logger = logging.getLogger(__file__)
 
@@ -30,7 +33,9 @@ def combine_results(
         )
         for result_file in nlu_result_files
     ]
-    combined_results = EvaluationResultSet(result_sets=result_sets, label_name=label_name)
+    combined_results = EvaluationResultSet(
+        result_sets=result_sets, label_name=label_name
+    )
     return combined_results
 
 
@@ -45,11 +50,13 @@ def parse_cli_arg_pair(input_string):
     """
     items = input_string.split("=")
     try:
-        assert len(items)==2
+        assert len(items) == 2
     except AssertionError:
-        logger.error(f"ERROR: argument '{input_string}' is not parseable. When passing key-value command line arguments, "
-                     f"separate key and value with = and surround values with spaces with quotes. "
-                     f"e.g. --cli_flag key=value key2=\"value 2\"")
+        logger.error(
+            f"ERROR: argument '{input_string}' is not parseable. When passing key-value command line arguments, "
+            f"separate key and value with = and surround values with spaces with quotes. "
+            f'e.g. --cli_flag key=value key2="value 2"'
+        )
         exit()
     key = items[0].strip()
     value = items[1].strip()
@@ -154,11 +161,6 @@ def create_argument_parser() -> argparse.ArgumentParser:
 
     return parser
 
-def compare():
-    pass
-
-def alarm():
-    pass
 
 def main():
     parser = create_argument_parser()
@@ -178,16 +180,13 @@ def main():
         combined_results.df, base_result_set_name, args.metrics_to_diff
     )
     combined_diffed_df = pd.concat([combined_results.df, diff_df], axis=1)
-    labels = []
 
-    if args.display_only_diff:
-        labels = diff_df.find_labels_with_changes()
-
-    table = combined_results.create_html_table(
-        df=combined_diffed_df,
-        labels=labels,
-        columns=args.metrics_to_display,
+    table = ResultSetDiffTable(
+        df_for_table=combined_diffed_df,
+        metrics_to_display=args.metrics_to_display,
         metric_to_sort_by=args.metric_to_sort_by,
+        display_only_diff=args.display_only_diff,
+        diff_columns=diff_df.columns.tolist(),
     )
 
     mode = "w+"
@@ -201,7 +200,7 @@ def main():
                 f"differences in at least one of the following metrics: "
                 f"{args.metrics_to_diff} are displayed.</body>"
             )
-        fh.write(table)
+        fh.write(table.styled_table)
 
 
 if __name__ == "__main__":
