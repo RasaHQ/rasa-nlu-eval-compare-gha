@@ -10,8 +10,6 @@ inputs:
       `previous_results/DIETClassifier_report.json="Previous Stable Results" current_results/DIETClassifier_report.json="New
       Results"`
     required: true
-    default: |
-      previous_results/intent_report.json="Previous" results/intent_report.json="New"
   json_outfile:
     description: File to which to write combined json report (contents of all result files).
     required: false

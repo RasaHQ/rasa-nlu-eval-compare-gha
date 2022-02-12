@@ -68,11 +68,17 @@ class ResultTable:
         )
         return styler
 
-    @property
-    def styled_table(self) -> Text:
+    def get_table(self, styled: bool=False) -> Text:
         """Styled HTML table"""
-        styled_table = self.style_table()
-        return styled_table.render()
+        if styled:
+            return self.style_table().render()
+        else:
+            return self.df.to_html(na_rep="N/A", formatters={
+                col: ("{:.0f}".format if "support" in col else "{:.2f}".format)
+                for col in self.df.columns
+                if not "confused_with" in col
+            },
+        )
 
 
 class ResultSetTable(ResultTable):

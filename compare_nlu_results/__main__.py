@@ -198,7 +198,7 @@ def main():
                 f"differences in at least one of the following metrics: "
                 f"{args.metrics_to_diff} are displayed.</body>"
             )
-        fh.write(table.styled_table)
+        fh.write(table.get_table(styled=False))
 
     combined_results.write_json_report_to_file(args.json_outfile)
 
