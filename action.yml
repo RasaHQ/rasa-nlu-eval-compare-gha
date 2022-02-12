@@ -70,6 +70,8 @@ runs:
       shell: bash
     - name: Set boolean options
       run: |
+        tr "[:upper:]" "[:lower:]" <<< "${{ inputs.append_table }}"
+
         case "$(tr "[:upper:]" "[:lower:]" <<< "${{ inputs.append_table }}")" in
             "true") export "APPEND_TABLE=--append_table" ;;
             *) export "APPEND_TABLE="  ;;
@@ -84,6 +86,7 @@ runs:
           "true") echo "STYLE_TABLE=--style_table" >> $GITHUB_ENV ;;
            *) echo "STYLE_TABLE=" >> $GITHUB_ENV ;;
         esac
+
       shell: bash
     - name: Run Result Comparison
       shell: bash
