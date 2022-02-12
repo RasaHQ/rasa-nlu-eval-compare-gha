@@ -1,10 +1,7 @@
-import json
 import logging
-from typing import Any, Dict, List, NamedTuple, Optional, Text
+from typing import Any, List, Optional, Text
 
 import pandas as pd
-
-from compare_nlu_results.dataframes import ResultSetDf, ResultDf
 
 logger = logging.getLogger(__file__)
 
@@ -69,7 +66,7 @@ class ResultTable:
 class ResultSetTable(ResultTable):
     def __init__(
         self,
-        df_for_table: ResultDf,
+        df_for_table: ResultSetDf,
         metric_to_sort_by: Text,
         metrics_to_display: Optional[List[Text]] = None,
         labels: Optional[List[Text]] = None,
@@ -82,8 +79,17 @@ class ResultSetTable(ResultTable):
         self.df = df_for_table.loc[sorted_labels, metrics_to_display]
         self.df = df_for_table
 
+    def style_table(self):
+        styler = super().style_table()
+        metrics_column_headers = {
+            "selector": "th.col_heading.level0",
+            "props": [("font-size","1.5em")],
+        }
 
-class ResultSetDiffTable(ResultTable):
+        styler.set_table_styles([metrics_column_headers], overwrite=False)
+        return styler
+
+class ResultSetDiffTable(ResultSetTable):
     def __init__(
         self,
         df_for_table: ResultSetDiffDf,
@@ -108,18 +114,13 @@ class ResultSetDiffTable(ResultTable):
 
     def style_table(self):
         def style_negative(value):
-            return f"color: red; font-weight: bold;" if value < 0 else None
+            return [("color", "red"), ("font-weight", "bold")] if value < 0 else None
 
         def style_positive(value):
-            return f"color: green; font-weight: bold;" if value > 0 else None
+            return [("color", "green"), ("font-weight", "bold")] if value > 0 else None
 
         styler = super().style_table()
-        metrics_column_headers = {
-            "selector": "th.col_heading.level0",
-            "props": [("font-size","1.5em")],
-        }
 
-        styler.set_table_styles([metrics_column_headers], overwrite=False)
         styler.applymap(style_negative, subset=self.diff_columns)
         styler.applymap(style_positive, subset=self.diff_columns)
 
