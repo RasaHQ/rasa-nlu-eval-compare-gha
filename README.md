@@ -19,36 +19,114 @@ You can set the following options using [`with`](https://docs.github.com/en/acti
 | `nlu_result_files`        | The Rasa NLU evaluation report files that should be compared and the labels to associate with each of them. For example: `intent_report.json=stable second_intent_report.json=incoming`. The report from which diffs should be calculated should be listed first. All results must be of the same type (e.g. intent classification, entity extraction). Labels for files should be unique. Do not put spaces before or after the = sign. Label values with spaces should be put in double quotes. For example: `previous_results/DIETClassifier_report.json="Previous Stable Results" current_results/DIETClassifier_report.json="New Results"` | |
 | `json_outfile`            | File to which to write combined json report (contents of all result files). | combined_results.json  |
 | `html_outfile`            | File to which to write HTML table. File will be overwritten unless `append_table` is specified. | formatted_compared_results.html |
-| `append_table`            | Whether to append the comparison table to the html output file, instead of overwriting it. If not specified, html_outfile will be overwritten. | false |
 | `table_title`             | Title of HTML table. | Compared NLU Evaluation Results |
 | `label_name`              | Type of labels predicted in the provided NLU result files e.g. 'intent', 'entity', 'retrieval intent'. | label |
 | `metrics_to_diff`         | Space-separated list of metrics to consider when determining changes across result sets. Valid values are support, f1-score, precision, and recall | support f1-score |
 | `metrics_to_display`         | Space-separated list of metrics to display in resulting HTML table. Valid values are support, f1-score, precision, recall, and confused_with (for intent classification and response selection only) | support f1-score |
 | `metric_to_sort_by`       | Metrics to sort by (descending) in resulting HTML table. | support |
 | `display_only_diff`       | Display only labels with a change in at least one metric from the first listed result set. | false |
-
+| `append_table`            | Whether to append the comparison table to the html output file, instead of overwriting it. If not specified, html_outfile will be overwritten. | false |
+| `style_table`            | Whether to add CSS style tags to the html table to highlight changed values. Not compatible with Github Markdown format. Set to `true` to use. | false |
 ## Outputs
 
-The list of available output variables:
-
-|          Output          |                                                          Description                                                          |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| `docker_image_name`      | Docker image name, the name contains the registry address and the image name, e.g., `docker.io/my_account/my_image_name`      |
-| `docker_image_tag`       | Tag of the image, e.g., `v1.0`                                                                                                |
-| `docker_image_full_name` | Docker image name (contains an address to the registry, image name, and tag), e.g., `docker.io/my_account/my_image_name:v1.0` |
-
-_GitHub Actions that run later in a workflow can use the output parameters returned by the Rasa GitHub Action, see [the example](examples/upgrade-deploy-rasa-x.yml) of output parameters usage._
+There are no output parameters returned by this Github Action. 
+Two files are written to the filepaths passed to inputs `json_outfile` and `html_outfile`.
 
 ### Example Usage
 
-The following is an example use-case in a CI/CD pipeline for a Rasa assistant which:
+
+You can use this Github Aciton in a CI/CD pipeline for a Rasa assistant which e.g.:
 1. Runs NLU cross-validation
-2. Refers to previous stable results kept in the repository (you could also e.g. download these from a remote storage bucket)
+2. Refers to previous stable results kept in the repository (you could e.g. download these from a remote storage bucket, the example below assumes the results are already in the repo path)
 3. Runs this action to compare the output of incoming cross-validation results to the previous stable results
 4. Posts the HTML table as a comment to the pull request to more easily review changes
 
+For example:
 ```yaml
+on:
+  pull_request: {}
 
+jobs:
+  run_cross_validation:
+    runs-on: ubuntu-latest
+    name: Cross-validate
+    steps:
+    - name: Setup python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run cross-validation
+      run: |
+        rasa test nlu --cross-validation
+
+    - name: Compare Intent Results
+      uses: RasaHQ/rasa-nlu-eval-compare-gha@1.0.0
+      with:
+        nlu_result_files: last_stable_results/intent_report.json="Stable" results/intent_report.json="Incoming"
+        table_title: Intent Classification Results
+        json_outfile: results/compared_intent_classification.json
+        html_outfile: results/compared_results.html
+        display_only_diff: false
+        label_name: intent
+        metrics_to_display: support f1-score
+        metrics_to_diff: support f1-score
+        metric_to_sort_by: support
+
+    - name: Compare Intent Results
+      uses: RasaHQ/rasa-nlu-eval-compare-gha@1.0.0
+      with:
+        nlu_result_files: last_stable_results/DIETClassifier_report.json="Stable" results/DIETClassifier_report.json="Incoming"
+        table_title: Entity Extraction Results
+        json_outfile: results/compared_DIETClassifier.json
+        html_outfile: results/compared_results.html
+        append_table: true
+        display_only_diff: true
+        label_name: entity
+        metrics_to_display: support f1-score precision recall
+        metrics_to_diff: precision recall
+        metric_to_sort_by: recall
+
+    - name: Post cross-val comparison to PR
+      uses: amn41/comment-on-pr@comment-file-contents
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        msg: results/compared_results.html
 ```
 
+
 ## Local Use
+
+To compare NLU evaluation results locally, run e.g.
+
+```bash
+python -m compare_nlu_results --nlu_result_files results/intent_report.json=Base new_results/intent_report.json=New
+```
+
+See `python -m compare_nlu_results --help` for all options; the descriptions can also be found in the [input arguments](#input-arguments) section.
+
+You can also use the package in a Python script to load, compare and further analyse results:
+
+```
+from compare_nlu_results.results import (
+    EvaluationResult,
+    EvaluationResultSet
+)
+
+# view just a result set
+old_results = EvaluationResult(json_report_filepath="tests/data/results/intent_report.json", name="old")
+print(old_results.df)
+
+# combine two result sets
+new_results = EvaluationResult(json_report_filepath="tests/data/second_results/intent_report.json", name="new")
+combined_results = EvaluationResultSet(result_sets=[old_results, new_results], label_name="intents")
+print(combined_results.df)
+
+# See differences between result sets
+combined_results.get_diffs_between_sets()
+```

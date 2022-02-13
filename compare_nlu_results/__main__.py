@@ -1,43 +1,15 @@
 import argparse
 import logging
-from math import comb
-from typing import List, Optional, Text
-
-import pandas as pd
 
 from compare_nlu_results.dataframes import ResultSetDiffDf
 from compare_nlu_results.results import (
     NamedResultFile,
-    EvaluationResult,
-    EvaluationResultSet,
+    combine_results
 )
 from compare_nlu_results.tables import ResultSetDiffTable
 
 
 logger = logging.getLogger(__file__)
-
-
-def combine_results(
-    nlu_result_files: List[NamedResultFile],
-    label_name: Optional[Text] = "label",
-) -> EvaluationResultSet:
-    """
-    Combine multiple NLU evaluation result files into a
-    EvaluationResultSet instance
-    """
-    result_sets = [
-        EvaluationResult(
-            name=result_file.name,
-            label_name=label_name,
-            json_report_filepath=result_file.filepath,
-        )
-        for result_file in nlu_result_files
-    ]
-    combined_results = EvaluationResultSet(
-        result_sets=result_sets, label_name=label_name
-    )
-    return combined_results
-
 
 def parse_cli_arg_pair(input_string):
     """

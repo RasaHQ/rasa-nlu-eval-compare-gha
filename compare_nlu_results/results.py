@@ -4,10 +4,9 @@ from typing import Any, Dict, List, NamedTuple, Optional, Text
 
 import pandas as pd
 
-from compare_nlu_results.dataframes import ResultSetDf, ResultDf
+from compare_nlu_results.dataframes import ResultDf, ResultSetDf, ResultSetDiffDf
 
 logger = logging.getLogger(__file__)
-
 
 class NamedResultFile(NamedTuple):
     """Holds a filepath and the name associated with it."""
@@ -26,9 +25,9 @@ class EvaluationResult:
 
     def __init__(
         self,
+        json_report_filepath: Optional[Text] = None,
         name: Text = "Evaluation Result",
         label_name: Text = "label",
-        json_report_filepath: Optional[Text] = None,
     ):
         self.report = self.load_json_report_from_file(json_report_filepath)
         self.name = name
@@ -80,9 +79,18 @@ class EvaluationResultSet(EvaluationResult):
         if not result_sets:
             result_sets = []
         self.result_sets = result_sets
+        self.validate_unique_result_set_names()
         self.label_name = label_name
         self.df = self.convert_result_sets_to_df()
         self.report = self.convert_df_to_report()
+
+    def validate_unique_result_set_names(self):
+        result_set_names = [result.name for result in self.result_sets]
+        try:
+            assert len(result_set_names) == len(set(result_set_names))
+        except AssertionError:
+            logger.error(f"ERROR: Result set names must be unique. Names {result_set_names} are not unique.")
+            raise
 
     def convert_result_sets_to_df(self) -> ResultSetDf:
         """Combine multiple sets of evaluation results into a single dataframe"""
@@ -136,3 +144,32 @@ class EvaluationResultSet(EvaluationResult):
             result.report = result.convert_df_to_report()
             result_sets.append(result)
         return result_sets
+
+    def get_diffs_between_sets(self, metrics_to_diff: Optional[List[Text]]=None):
+        base_result_set_name = self.result_sets[0].name
+        diff_df = ResultSetDiffDf.from_df(
+            self.df, base_result_set_name, metrics_to_diff
+        )
+        return diff_df
+
+
+def combine_results(
+    nlu_result_files: List[NamedResultFile],
+    label_name: Optional[Text] = "label",
+) -> EvaluationResultSet:
+    """
+    Combine multiple NLU evaluation result files into a
+    EvaluationResultSet instance
+    """
+    result_sets = [
+        EvaluationResult(
+            json_report_filepath=result_file.filepath,
+            name=result_file.name,
+            label_name=label_name
+        )
+        for result_file in nlu_result_files
+    ]
+    combined_results = EvaluationResultSet(
+        result_sets=result_sets, label_name=label_name
+    )
+    return combined_results
