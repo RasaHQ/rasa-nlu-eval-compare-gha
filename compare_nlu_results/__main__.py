@@ -175,7 +175,7 @@ def main():
         fh.write(f"<h1>{args.table_title}</h1>")
         if args.display_only_diff:
             fh.write(
-                f"<body>Only averages and the {args.label_name}(s) that show"
+                f"<body>Only averages and the {args.label_name}(s) that show "
                 f"differences in at least one of the following metrics: "
                 f"{args.metrics_to_diff} are displayed.</body>"
             )
