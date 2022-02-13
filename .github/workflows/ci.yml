@@ -12,7 +12,7 @@ jobs:
         ref: ${{ github.event.pull_request.head.sha }}
 
     - name: Compare Intent Results
-      uses: RasaHQ/rasa-nlu-eval-compare-gha@$GITHUB_HEAD_REF
+      uses: ./
       with:
         nlu_result_files: tests/data/results1/intent_report.json="1" tests/data/results2/intent_report.json="2"
         table_title: Intent Classification Results
@@ -25,7 +25,7 @@ jobs:
         metric_to_sort_by: support
 
     - name: Compare Response Selection Results
-      uses: RasaHQ/rasa-nlu-eval-compare-gha@$GITHUB_HEAD_REF
+      uses: ./
       with:
         nlu_result_files: tests/data/results1/response_selection_report.json="1" tests/data/results2/response_selection_report.json="2"
         table_title: Response Selection Results
@@ -39,7 +39,7 @@ jobs:
         metric_to_sort_by: f1-score
 
     - name: Compare Entity Results and Append
-      uses: RasaHQ/rasa-nlu-eval-compare-gha@$GITHUB_HEAD_REF
+      uses: ./
       with:
         nlu_result_files: tests/data/results1/DIETClassifier.json="1" tests/data/results2/DIETClassifier.json="2"
         table_title: Intent Classification Results
