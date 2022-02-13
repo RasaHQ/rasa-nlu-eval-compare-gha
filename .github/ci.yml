@@ -1,0 +1,61 @@
+on:
+  pull_request: {}
+
+jobs:
+  test_action:
+    runs-on: ubuntu-latest
+    name: Cross-validate
+    steps:
+    - name: Checkout pull request HEAD commit instead of merge commit
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+
+    - name: Compare Intent Results
+      uses: action.yml
+      with:
+        nlu_result_files: tests/data/results1/intent_report.json="1" tests/data/results2/intent_report.json="2"
+        table_title: Intent Classification Results
+        json_outfile: compared_intent_classification.json
+        html_outfile: compared_results.html
+        display_only_diff: false
+        label_name: intent
+        metrics_to_display: support f1-score
+        metrics_to_diff: support f1-score
+        metric_to_sort_by: support
+
+    - name: Compare Response Selection Results
+      uses: action.yml
+      with:
+        nlu_result_files: tests/data/results1/response_selection_report.json="1" tests/data/results2/response_selection_report.json="2"
+        table_title: Response Selection Results
+        json_outfile: compared_response_selection_report.json
+        html_outfile: compared_results.html
+        append_table: true
+        display_only_diff: true
+        label_name: retrieval_intent
+        metrics_to_display: support f1-score  confused_with
+        metrics_to_diff: support f1-score
+        metric_to_sort_by: f1-score
+
+    - name: Compare Entity Results and Append
+      uses: action.yml
+      with:
+        nlu_result_files: tests/data/results1/DIETClassifier.json="1" tests/data/results2/DIETClassifier.json="2"
+        table_title: Intent Classification Results
+        json_outfile: compared_DIETClassifier.json
+        html_outfile: compared_results.html
+        append_table: true
+        display_only_diff: true
+        label_name: entity
+        metrics_to_display: support f1-score precision recall
+        metrics_to_diff: support f1-score precision recall
+        metric_to_sort_by: support
+
+    - name: Post cross-val comparison to PR
+      uses: amn41/comment-on-pr@comment-file-contents
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        msg: compared_results.html
+
