@@ -4,7 +4,7 @@ on:
 jobs:
   test_action:
     runs-on: ubuntu-latest
-    name: Cross-validate
+    name: Test action
     steps:
     - name: Checkout pull request HEAD commit instead of merge commit
       uses: actions/checkout@v2
