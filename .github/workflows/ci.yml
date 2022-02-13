@@ -41,7 +41,7 @@ jobs:
     - name: Compare Entity Results and Append
       uses: ./
       with:
-        nlu_result_files: tests/data/results1/DIETClassifier.json="1" tests/data/results2/DIETClassifier.json="2"
+        nlu_result_files: tests/data/results1/DIETClassifier_report.json="1" tests/data/results2/DIETClassifier_report.json="2"
         table_title: Intent Classification Results
         json_outfile: compared_DIETClassifier.json
         html_outfile: compared_results.html
