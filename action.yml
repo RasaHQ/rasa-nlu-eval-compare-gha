@@ -21,23 +21,18 @@ inputs:
   table_title:
     description: Title of HTML table.
     required: false
-    default: Compared NLU Evaluation Results
   label_name:
     description: Type of labels predicted in the provided NLU result files e.g. 'intent', 'entity', 'retrieval intent'.
     required: false
-    default: label
   metrics_to_diff:
     description: Metrics to consider when determining changes across result sets.
     required: false
-    default: support f1-score
   metrics_to_display:
     description: Metrics to display in resulting HTML table.
     required: false
-    default: support f1-score
   metric_to_sort_by:
     description: Metrics to sort by (descending) in resulting HTML table.
     required: false
-    default: support
   display_only_diff:
     description: |
       Display only labels with a change in at least one metric from the first listed result set. Default is false.
