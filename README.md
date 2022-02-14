@@ -1,17 +1,27 @@
 # Rasa NLU Evaluation Result Comparison
 This repository contains code to compare multiple sets of Rasa NLU evaluation results. It can be used locally or as a Github Action.
+
+You can find more information about Rasa NLU evaluation in [the Rasa Open Source docs](https://rasa.com/docs/rasa/testing-your-assistant#comparing-nlu-performance).
 ## Use as a Github Action
 
 This Github action compares NLU evaluation results using the command `python -m compare_nlu_results` with the [input arguments](#input-arguments) provided to it.
 
-You can find more information about Rasa NLU evaluation in [the Rasa Open Source docs](https://rasa.com/docs/rasa/testing-your-assistant#comparing-nlu-performance).
+Basic usage:
+```
+...
+  steps:
+  - name: Compare NLU Results
+    uses: RasaHQ/rasa-nlu-eval-compare-gha@1.0.0
+    with:
+      nlu_result_files: results1/intent_report.json="old"  results2/intent_report.json="new"
+```
 
 ### Action Output
 
 There are no output parameters returned by this Github Action, however two files are written:
 
-It writes a json report of all result sets combined to `json_outfile`.
-It writes a formatted table of the compared results to `html_outfile`. 
+It writes a json report of all result sets combined to the filepath specified by the input `json_outfile`.
+It writes a formatted table of the compared results to the filepath specified by the input `html_outfile`. 
 For example:
 
 <table border="1" class="dataframe">
