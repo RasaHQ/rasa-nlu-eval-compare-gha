@@ -69,20 +69,21 @@ runs:
         pip install -r "${{ github.action_path }}"/requirements.txt
       shell: bash
     - name: Set boolean options
+      id: bool_opts
       run: |
         case "$(tr "[:upper:]" "[:lower:]" <<< "${{ inputs.append_table }}")" in
-            "true") echo "APPEND_TABLE=--append_table" >> $GITHUB_ENV ;;
-            *) echo "APPEND_TABLE=" >> $GITHUB_ENV ;;
+            "true") echo "::set-output name=append_table::--append_table" ;;
+            *) echo "::set-output name=append_table::''";;
         esac
 
         case "$(tr "[:upper:]" "[:lower:]" <<< "${{ inputs.display_only_diff }}")" in
-          "true") echo "DISPLAY_ONLY_DIFF=--display_only_diff" >> $GITHUB_ENV ;;
-           *) echo "DISPLAY_ONLY_DIFF=" >> $GITHUB_ENV ;;
+            "true") echo "::set-output name=display_only_diff::--display_only_diff" ;;
+            *) echo "::set-output name=display_only_diff::''";;
         esac
 
         case "$(tr "[:upper:]" "[:lower:]" <<< "${{ inputs.style_table }}")" in
-          "true") echo "STYLE_TABLE=--style_table" >> $GITHUB_ENV ;;
-           *) echo "STYLE_TABLE=" >> $GITHUB_ENV ;;
+            "true") echo "::set-output name=style_table::--style_table" ;;
+            *) echo "::set-output name=style_table::''";;
         esac
 
       shell: bash
@@ -99,6 +100,6 @@ runs:
             --metrics_to_diff ${{ inputs.metrics_to_diff }} \
             --metrics_to_display ${{ inputs.metrics_to_display }} \
             --metric_to_sort_by "${{ inputs.metric_to_sort_by }}" \
-            ${{ env.APPEND_TABLE }} \
-            ${{ env.DISPLAY_ONLY_DIFF }} \
-            ${{ env.STYLE_TABLE }}
+            "${{ steps.bool_opts.outputs.append_table }}" \
+            "${{ steps.bool_opts.outputs.display_only_diff }}" \
+            "${{ steps.bool_opts.outputs.style_table }}"
