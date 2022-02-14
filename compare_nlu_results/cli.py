@@ -93,14 +93,14 @@ def create_argument_parser() -> argparse.ArgumentParser:
         "--metrics_to_diff",
         help=("Metrics to consider when determining changes across result sets."),
         nargs="+",
-        default=["support", "f1-score"],
+        required=False
     )
 
     parser.add_argument(
         "--metrics_to_display",
         help=("Metrics to display in resulting HTML table."),
         nargs="+",
-        default=["support", "f1-score"],
+        required=False
     )
 
     parser.add_argument(

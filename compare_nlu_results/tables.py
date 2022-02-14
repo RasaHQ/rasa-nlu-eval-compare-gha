@@ -123,7 +123,6 @@ class ResultSetDiffTable(ResultSetTable):
         diff_df: ResultSetDiffDf,
         metric_to_sort_by: Text,
         metrics_to_display: Optional[List[Text]] = None,
-        metrics_to_diff: Optional[List[Text]] = None,
         display_only_diff: bool = False,
         title: Optional[Text] = "Compared NLU Evaluation Results",
         label_name: Optional[Text] = "label"
@@ -131,7 +130,8 @@ class ResultSetDiffTable(ResultSetTable):
         self.display_only_diff = display_only_diff
         self.title = title
         self.label_name = label_name
-        self.metrics_to_diff = metrics_to_diff
+        self.metrics_to_diff = list(set(diff_df.columns.get_level_values("metric")))
+
         labels = None
         if self.display_only_diff:
             labels = diff_df.find_labels_with_changes()
@@ -139,12 +139,12 @@ class ResultSetDiffTable(ResultSetTable):
             metric_to_sort_by=metric_to_sort_by, labels=labels
         )
         if not metrics_to_display:
-            metrics_to_display = result_set_df.columns.get_level_values(0)
-        self.df = pd.concat([result_set_df, diff_df], axis=1).loc[sorted_labels, metrics_to_display]
+            metrics_order = {metric: ix for ix, metric in enumerate(result_set_df.columns.get_level_values(0))}
+            metrics_to_display = sorted(list(set(result_set_df.columns.get_level_values(0))), key=lambda x: metrics_order[x])
+        self.metrics_to_display = metrics_to_display
+        self.df = pd.concat([result_set_df, diff_df], axis=1).loc[sorted_labels, self.metrics_to_display]
+        self.diff_columns = [col for col in diff_df.columns.tolist() if col in self.df.columns]
 
-        diff_columns = diff_df.columns.tolist()
-        diff_columns_in_table = [col for col in diff_columns if col in self.df.columns]
-        self.diff_columns = diff_columns_in_table
 
     def style_table(self):
         def style_negative(value):

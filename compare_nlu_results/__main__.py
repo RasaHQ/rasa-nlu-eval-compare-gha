@@ -33,6 +33,7 @@ def create_comparison(
     combined_results = EvaluationResultSet.from_result_files(
         nlu_result_files=[base_result_file]+other_result_files, label_name=label_name
     )
+
     diff_df = ResultSetDiffDf.from_df(
         combined_results.df, base_result_file.name, metrics_to_diff
     )
