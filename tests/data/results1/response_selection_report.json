@@ -1,0 +1,315 @@
+{
+  "faq/community_size": {
+    "precision": 0.975,
+    "recall": 0.975,
+    "f1-score": 0.975,
+    "support": 40,
+    "confused_with": {
+      "faq/what_is_forum": 1
+    }
+  },
+  "chitchat/ask_ishuman": {
+    "precision": 0.8846153846,
+    "recall": 0.92,
+    "f1-score": 0.9019607843,
+    "support": 25,
+    "confused_with": {
+      "chitchat/ask_isbot": 1,
+      "chitchat/ask_whoami": 1
+    }
+  },
+  "chitchat/ask_weather": {
+    "precision": 1.0,
+    "recall": 0.9102564103,
+    "f1-score": 0.9530201342,
+    "support": 78,
+    "confused_with": {
+      "chitchat/ask_whatisrasa": 3,
+      "chitchat/ask_wherefrom": 2
+    }
+  },
+  "chitchat/ask_whatisrasa": {
+    "precision": 0.8850574713,
+    "recall": 0.9746835443,
+    "f1-score": 0.9277108434,
+    "support": 79,
+    "confused_with": {
+      "chitchat/ask_restaurant": 1,
+      "chitchat/ask_whatspossible": 1
+    }
+  },
+  "chitchat/ask_time": {
+    "precision": 1.0,
+    "recall": 0.9803921569,
+    "f1-score": 0.9900990099,
+    "support": 51,
+    "confused_with": {
+      "chitchat/ask_howdoing": 1
+    }
+  },
+  "faq/is_programming_required": {
+    "precision": 0.875,
+    "recall": 0.9245283019,
+    "f1-score": 0.8990825688,
+    "support": 53,
+    "confused_with": {
+      "faq/opensource_cost": 2,
+      "faq/python_version": 1
+    }
+  },
+  "chitchat/ask_restaurant": {
+    "precision": 0.9807692308,
+    "recall": 0.9272727273,
+    "f1-score": 0.953271028,
+    "support": 55,
+    "confused_with": {
+      "chitchat/ask_wherefrom": 2,
+      "chitchat/ask_howdoing": 1
+    }
+  },
+  "chitchat/ask_wherefrom": {
+    "precision": 0.8541666667,
+    "recall": 0.8367346939,
+    "f1-score": 0.8453608247,
+    "support": 49,
+    "confused_with": {
+      "chitchat/ask_howold": 3,
+      "chitchat/ask_howbuilt": 2
+    }
+  },
+  "faq/tutorialcore": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 14,
+    "confused_with": {}
+  },
+  "chitchat/ask_isbot": {
+    "precision": 0.9210526316,
+    "recall": 0.9210526316,
+    "f1-score": 0.9210526316,
+    "support": 38,
+    "confused_with": {
+      "chitchat/ask_howdoing": 1,
+      "chitchat/ask_ishuman": 1
+    }
+  },
+  "faq/languages": {
+    "precision": 0.9489795918,
+    "recall": 0.93,
+    "f1-score": 0.9393939394,
+    "support": 100,
+    "confused_with": {
+      "faq/channels": 2,
+      "faq/is_programming_required": 2
+    }
+  },
+  "faq/ee": {
+    "precision": 0.96,
+    "recall": 1.0,
+    "f1-score": 0.9795918367,
+    "support": 24,
+    "confused_with": {}
+  },
+  "faq/tutorials": {
+    "precision": 0.9714285714,
+    "recall": 0.9189189189,
+    "f1-score": 0.9444444444,
+    "support": 37,
+    "confused_with": {
+      "faq/rasax": 2,
+      "faq/channels": 1
+    }
+  },
+  "faq/tutorialnlu": {
+    "precision": 1.0,
+    "recall": 0.9375,
+    "f1-score": 0.9677419355,
+    "support": 16,
+    "confused_with": {
+      "faq/tutorials": 1
+    }
+  },
+  "chitchat/ask_howold": {
+    "precision": 0.9272727273,
+    "recall": 0.9444444444,
+    "f1-score": 0.9357798165,
+    "support": 54,
+    "confused_with": {
+      "chitchat/ask_howdoing": 2,
+      "chitchat/ask_howbuilt": 1
+    }
+  },
+  "faq/opensource_cost": {
+    "precision": 0.9272727273,
+    "recall": 0.9807692308,
+    "f1-score": 0.953271028,
+    "support": 104,
+    "confused_with": {
+      "faq/differencecorenlu": 1,
+      "faq/ee": 1
+    }
+  },
+  "out_of_scope/non_english": {
+    "precision": 0.8461538462,
+    "recall": 0.5365853659,
+    "f1-score": 0.6567164179,
+    "support": 41,
+    "confused_with": {
+      "out_of_scope/other": 19
+    }
+  },
+  "chitchat/ask_howbuilt": {
+    "precision": 0.8979591837,
+    "recall": 0.8979591837,
+    "f1-score": 0.8979591837,
+    "support": 49,
+    "confused_with": {
+      "chitchat/ask_howdoing": 2,
+      "chitchat/ask_wherefrom": 2
+    }
+  },
+  "chitchat/ask_howdoing": {
+    "precision": 0.8865979381,
+    "recall": 0.9247311828,
+    "f1-score": 0.9052631579,
+    "support": 93,
+    "confused_with": {
+      "chitchat/ask_whatspossible": 3,
+      "chitchat/ask_isbot": 2
+    }
+  },
+  "chitchat/ask_whatspossible": {
+    "precision": 0.9117647059,
+    "recall": 0.8857142857,
+    "f1-score": 0.8985507246,
+    "support": 105,
+    "confused_with": {
+      "chitchat/ask_whatisrasa": 5,
+      "chitchat/ask_howdoing": 3
+    }
+  },
+  "out_of_scope/other": {
+    "precision": 0.9506493506,
+    "recall": 0.9891891892,
+    "f1-score": 0.9695364238,
+    "support": 370,
+    "confused_with": {
+      "out_of_scope/non_english": 4
+    }
+  },
+  "faq/voice": {
+    "precision": 0.9863013699,
+    "recall": 0.9863013699,
+    "f1-score": 0.9863013699,
+    "support": 73,
+    "confused_with": {
+      "faq/is_programming_required": 1
+    }
+  },
+  "faq/python_version": {
+    "precision": 0.9375,
+    "recall": 0.9375,
+    "f1-score": 0.9375,
+    "support": 16,
+    "confused_with": {
+      "faq/is_programming_required": 1
+    }
+  },
+  "faq/differencerasarasax": {
+    "precision": 1.0,
+    "recall": 0.8148148148,
+    "f1-score": 0.8979591837,
+    "support": 27,
+    "confused_with": {
+      "faq/rasax": 4,
+      "faq/opensource_cost": 1
+    }
+  },
+  "chitchat/ask_whatismyname": {
+    "precision": 0.9230769231,
+    "recall": 0.972972973,
+    "f1-score": 0.9473684211,
+    "support": 37,
+    "confused_with": {
+      "chitchat/ask_whatspossible": 1
+    }
+  },
+  "chitchat/ask_languagesbot": {
+    "precision": 1.0,
+    "recall": 0.9365079365,
+    "f1-score": 0.9672131148,
+    "support": 63,
+    "confused_with": {
+      "chitchat/ask_ishuman": 2,
+      "chitchat/ask_whatspossible": 2
+    }
+  },
+  "faq/differencecorenlu": {
+    "precision": 0.9833333333,
+    "recall": 0.9672131148,
+    "f1-score": 0.9752066116,
+    "support": 61,
+    "confused_with": {
+      "faq/opensource_cost": 2
+    }
+  },
+  "faq/rasax": {
+    "precision": 0.75,
+    "recall": 0.96,
+    "f1-score": 0.8421052632,
+    "support": 25,
+    "confused_with": {
+      "faq/is_programming_required": 1
+    }
+  },
+  "faq/channels": {
+    "precision": 0.95,
+    "recall": 0.8636363636,
+    "f1-score": 0.9047619048,
+    "support": 66,
+    "confused_with": {
+      "faq/languages": 4,
+      "faq/opensource_cost": 2
+    }
+  },
+  "faq/slots": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 62,
+    "confused_with": {}
+  },
+  "faq/what_is_forum": {
+    "precision": 0.98,
+    "recall": 0.98,
+    "f1-score": 0.98,
+    "support": 50,
+    "confused_with": {
+      "faq/community_size": 1
+    }
+  },
+  "chitchat/ask_whoami": {
+    "precision": 0.8275862069,
+    "recall": 0.9230769231,
+    "f1-score": 0.8727272727,
+    "support": 26,
+    "confused_with": {
+      "chitchat/ask_whatismyname": 1,
+      "chitchat/ask_whatspossible": 1
+    }
+  },
+  "accuracy": 0.9384149419,
+  "macro avg": {
+    "precision": 0.9356730581,
+    "recall": 0.9268048676,
+    "f1-score": 0.9289359336,
+    "support": 1981
+  },
+  "weighted avg": {
+    "precision": 0.9395871767,
+    "recall": 0.9384149419,
+    "f1-score": 0.9374515421,
+    "support": 1981
+  }
+}
