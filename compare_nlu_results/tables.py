@@ -1,11 +1,11 @@
 import logging
-from typing import Any, List, Optional, Text
+from typing import List, Optional, Text
 
 import pandas as pd
 
-logger = logging.getLogger(__file__)
-
 from compare_nlu_results.dataframes import ResultDf, ResultSetDf, ResultSetDiffDf
+
+logger = logging.getLogger(__file__)
 
 
 class ResultTable:
@@ -15,6 +15,7 @@ class ResultTable:
         metric_to_sort_by: Text,
         metrics_to_display: Optional[List[Text]] = None,
         labels: Optional[List[Text]] = None,
+        title: Optional[Text] = "NLU Evaluation Results",
     ):
         sorted_labels = df.get_sorted_labels(
             metric_to_sort_by=metric_to_sort_by, labels=labels
@@ -23,6 +24,7 @@ class ResultTable:
             metrics_to_display = df.columns
         self.df = df.loc[sorted_labels, metrics_to_display]
         self.df = df
+        self.title = title
 
     def style_table(self) -> pd.DataFrame.style:
         borders = {
@@ -63,22 +65,34 @@ class ResultTable:
             formatter={
                 col: ("{:.0f}" if "support" in col else "{:.2f}")
                 for col in self.df.columns
-                if not "confused_with" in col
+                if "confused_with" not in col
             },
         )
         return styler
 
-    def get_table(self, styled: bool=False) -> Text:
+    def get_table(self, styled: bool = False) -> Text:
         """Styled HTML table"""
         if styled:
             return self.style_table().render()
         else:
-            return self.df.to_html(na_rep="N/A", formatters={
-                col: ("{:.0f}".format if "support" in col else "{:.2f}".format)
-                for col in self.df.columns
-                if not "confused_with" in col
-            },
-        )
+            return self.df.to_html(
+                na_rep="N/A",
+                formatters={
+                    col: ("{:.0f}".format if "support" in col else "{:.2f}".format)
+                    for col in self.df.columns
+                    if "confused_with" not in col
+                },
+            )
+
+    def write_to_file(
+        self, html_outfile: Text, append_table: bool = False, style_table: bool = False
+    ):
+        mode = "w+"
+        if append_table:
+            mode = "a+"
+        with open(html_outfile, mode) as fh:
+            fh.write(f"<h1>{self.title}</h1>")
+            fh.write(self.get_table(styled=style_table))
 
 
 class ResultSetTable(ResultTable):
@@ -116,22 +130,48 @@ class ResultSetDiffTable(ResultSetTable):
         metric_to_sort_by: Text,
         metrics_to_display: Optional[List[Text]] = None,
         display_only_diff: bool = False,
-        diff_columns: Optional[List[Any]] = None,
+        title: Optional[Text] = "Compared NLU Evaluation Results",
+        label_name: Optional[Text] = "label",
     ):
+        self.display_only_diff = display_only_diff
+        self.title = title
+        self.label_name = label_name
+        self.metrics_to_diff = list(set(diff_df.columns.get_level_values("metric")))
+
         labels = None
-        if display_only_diff:
+        if self.display_only_diff:
             labels = diff_df.find_labels_with_changes()
         sorted_labels = result_set_df.get_sorted_labels(
             metric_to_sort_by=metric_to_sort_by, labels=labels
         )
-        if not metrics_to_display:
-            metrics_to_display = result_set_df.columns.get_level_values(0)
-        self.df = pd.concat([result_set_df, diff_df], axis=1).loc[sorted_labels, metrics_to_display]
 
-        if not diff_columns:
-            diff_columns = []
-        diff_columns_in_table = [col for col in diff_columns if col in self.df.columns]
-        self.diff_columns = diff_columns_in_table
+        all_metrics = set(result_set_df.columns.get_level_values(0))
+        if not metrics_to_display:
+            metrics_order = {
+                metric: ix
+                for ix, metric in enumerate(result_set_df.columns.get_level_values(0))
+            }
+            metrics_to_display = sorted(
+                list(all_metrics), key=lambda x: metrics_order[x]
+            )
+        else:
+            try:
+                assert all([metric in all_metrics for metric in metrics_to_display])
+            except AssertionError:
+                logger.error(
+                    f"ERROR: You have specified a metric to display that does "
+                    f"not exist. Valid metrics for these reports are {all_metrics}. "
+                    f"You specified {metrics_to_display}"
+                )
+                raise
+
+        self.metrics_to_display = metrics_to_display
+        self.df = pd.concat([result_set_df, diff_df], axis=1).loc[
+            sorted_labels, self.metrics_to_display
+        ]
+        self.diff_columns = [
+            col for col in diff_df.columns.tolist() if col in self.df.columns
+        ]
 
     def style_table(self):
         def style_negative(value):
@@ -146,3 +186,19 @@ class ResultSetDiffTable(ResultSetTable):
         styler.applymap(style_positive, subset=self.diff_columns)
 
         return styler
+
+    def write_to_file(
+        self, html_outfile: Text, append_table: bool = False, style_table: bool = False
+    ):
+        mode = "w+"
+        if append_table:
+            mode = "a+"
+        with open(html_outfile, mode) as fh:
+            fh.write(f"<h1>{self.title}</h1>")
+            if self.display_only_diff:
+                fh.write(
+                    f"<body>Only averages and the {self.label_name}(s) that show "
+                    f"differences in at least one of the following metrics: "
+                    f"{self.metrics_to_diff} are displayed.</body>"
+                )
+            fh.write(self.get_table(styled=style_table))

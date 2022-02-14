@@ -1,12 +1,112 @@
 # Rasa NLU Evaluation Result Comparison
-This repository contains code to combine and compare multiple sets of Rasa NLU evaluation results. It can be used locally or as a Github Action.
-## Use as a Github Action
-
-This Github action compares multiple sets of Rasa NLU evaluation results. It runs the command `python -m compare_nlu_results` with the [input arguments](#input-arguments) provided to it.
-
-It outputs a formatted HTML table of the compared results and a json report of all result sets combined. 
+This repository contains code to compare multiple sets of Rasa NLU evaluation results. It can be used locally or as a Github Action.
 
 You can find more information about Rasa NLU evaluation in [the Rasa Open Source docs](https://rasa.com/docs/rasa/testing-your-assistant#comparing-nlu-performance).
+## Use as a Github Action
+
+This Github action compares NLU evaluation results using the command `python -m compare_nlu_results` with the [input arguments](#input-arguments) provided to it.
+
+Basic usage:
+```
+...
+  steps:
+  - name: Compare NLU Results
+    uses: RasaHQ/rasa-nlu-eval-compare-gha@1.0.0
+    with:
+      nlu_result_files: results1/intent_report.json="old"  results2/intent_report.json="new"
+```
+
+### Action Output
+
+There are no output parameters returned by this Github Action, however two files are written:
+
+It writes a json report of all result sets combined to the filepath specified by the input `json_outfile`.
+It writes a formatted table of the compared results to the filepath specified by the input `html_outfile`. 
+For example:
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th>metric</th>
+      <th colspan="3" halign="left">precision</th>
+      <th colspan="3" halign="left">recall</th>
+    </tr>
+    <tr>
+      <th>result_set</th>
+      <th>old</th>
+      <th>new</th>
+      <th>(new - old)</th>
+      <th>old</th>
+      <th>new</th>
+      <th>(new - old)</th>
+    </tr>
+    <tr>
+      <th>entity</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>micro avg</th>
+      <td>0.994698</td>
+      <td>0.998004</td>
+      <td>0.003306</td>
+      <td>0.999334</td>
+      <td>0.998668</td>
+      <td>-0.000666</td>
+    </tr>
+    <tr>
+      <th>macro avg</th>
+      <td>0.997904</td>
+      <td>0.998714</td>
+      <td>0.00081</td>
+      <td>0.998967</td>
+      <td>0.994012</td>
+      <td>-0.004955</td>
+    </tr>
+    <tr>
+      <th>weighted avg</th>
+      <td>0.994733</td>
+      <td>0.99802</td>
+      <td>0.003287</td>
+      <td>0.999334</td>
+      <td>0.998668</td>
+      <td>-0.000666</td>
+    </tr>
+    <tr>
+      <th>product</th>
+      <td>0.989286</td>
+      <td>0.998198</td>
+      <td>0.008912</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>language</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.996633</td>
+      <td>-0.003367</td>
+    </tr>
+    <tr>
+      <th>company</th>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.988636</td>
+      <td>1.0</td>
+      <td>0.011364</td>
+    </tr>
+  </tbody>
+</table>
 
 ### Input arguments
 
@@ -21,23 +121,20 @@ You can set the following options using [`with`](https://docs.github.com/en/acti
 | `html_outfile`            | File to which to write HTML table. File will be overwritten unless `append_table` is specified. | formatted_compared_results.html |
 | `table_title`             | Title of HTML table. | Compared NLU Evaluation Results |
 | `label_name`              | Type of labels predicted in the provided NLU result files e.g. 'intent', 'entity', 'retrieval intent'. | label |
-| `metrics_to_diff`         | Space-separated list of metrics to consider when determining changes across result sets. Valid values are support, f1-score, precision, and recall | support f1-score |
-| `metrics_to_display`         | Space-separated list of metrics to display in resulting HTML table. Valid values are support, f1-score, precision, recall, and confused_with (for intent classification and response selection only) | support f1-score |
-| `metric_to_sort_by`       | Metrics to sort by (descending) in resulting HTML table. | support |
-| `display_only_diff`       | Display only labels with a change in at least one metric from the first listed result set. | false |
-| `append_table`            | Whether to append the comparison table to the html output file, instead of overwriting it. If not specified, html_outfile will be overwritten. | false |
-| `style_table`            | Whether to add CSS style tags to the html table to highlight changed values. Not compatible with Github Markdown format. Set to `true` to use. | false |
-## Outputs
+| `metrics_to_diff`         | Space-separated list of numeric metrics to consider when determining changes across result sets e.g. "support, f1-score". | All numeric metrics found in input reports |
+| `metrics_to_display`         | Space-separated list of metrics to display in resulting HTML table e.g. "support, f1-score, confused_with" | All metrics found in input reports |
+| `metric_to_sort_by`       | Metrics to sort by (descending) in resulting HTML table. | `support` |
+| `display_only_diff`       | Display only labels (e.g. intents or entities) where there is a difference in at least one of the `metrics_to_diff` between the first listed result set and the other result set(s). Set to `true` to use. | |
+| `append_table`            | Whether to append the comparison table to the html output file, instead of overwriting it. If not specified, html_outfile will be overwritten. Set to `true` to use. | |
+| `style_table`            | Whether to add CSS style tags to the html table to highlight changed values. Not compatible with Github Markdown format. Set to `true` to use. | |
 
-There are no output parameters returned by this Github Action. 
-Two files are written to the filepaths passed to inputs `json_outfile` and `html_outfile`.
 
 ### Example Usage
 
 
 You can use this Github Aciton in a CI/CD pipeline for a Rasa assistant which e.g.:
 1. Runs NLU cross-validation
-2. Refers to previous stable results kept in the repository (you could e.g. download these from a remote storage bucket, the example below assumes the results are already in the repo path)
+2. Refers to previous stable results (e.g. download these from a remote storage bucket, the example below assumes the results are already in the repo path for demonstration purposes)
 3. Runs this action to compare the output of incoming cross-validation results to the previous stable results
 4. Posts the HTML table as a comment to the pull request to more easily review changes
 

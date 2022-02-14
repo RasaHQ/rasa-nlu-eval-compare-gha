@@ -33,16 +33,6 @@ class ResultDf(pd.DataFrame):
             except KeyError:
                 pass
 
-    def drop_non_numeric_metrics(self):
-        """
-        Drop metrics that are not numeric i.e. `confused_with` in intent reports.
-        """
-        for non_numeric_metric in ["confused_with"]:
-            try:
-                self.drop(columns=non_numeric_metric, level="metric", inplace=True)
-            except:
-                pass
-
     def set_index_names(self):
         """Set names of indices of dataframe.
 
@@ -55,7 +45,6 @@ class ResultDf(pd.DataFrame):
     def drop_non_numeric_metrics(self):
         """
         Drop metrics that are not numeric
-        i.e. `confused_with` in intent reports.
         """
         for non_numeric_metric in ["confused_with"]:
             try:
@@ -106,12 +95,12 @@ class ResultSetDf(ResultDf):
 
     def drop_non_numeric_metrics(self):
         """
-        Drop metrics that are not numeric i.e. `confused_with` in intent reports.
+        Drop metrics that are not numeric
         """
         for non_numeric_metric in ["confused_with"]:
             try:
                 self.drop(columns=non_numeric_metric, level="metric", inplace=True)
-            except:
+            except KeyError:
                 pass
 
     def set_index_names(self):
@@ -140,6 +129,18 @@ class ResultSetDiffDf(ResultSetDf):
         df_with_only_changes = self[self.apply(lambda x: x.any(), axis=1)]
         return df_with_only_changes.index.values.tolist()
 
+    def clean(self, base_result_set_name: Text):
+        self.drop(columns=base_result_set_name, level=1, inplace=True)
+        self.drop_non_numeric_metrics()
+
+    def name_diff_cols(self, base_result_set_name: Text):
+        self.rename(
+            lambda col: f"({col} - {base_result_set_name})",
+            axis=1,
+            level=1,
+            inplace=True,
+        )
+
     @classmethod
     def from_df(
         cls,
@@ -147,15 +148,33 @@ class ResultSetDiffDf(ResultSetDf):
         base_result_set_name: Text,
         metrics_to_diff: Optional[List[Text]] = None,
     ) -> "ResultSetDf":
-        """Initialize Dataframe of differences in each metric across result sets from undiffed dataframe."""
+        """
+        Initialize Dataframe of differences in each metric
+        across result sets from undiffed dataframe.
+        """
+
+        all_numeric_metrics = [
+            metric
+            for metric in list(set(df.columns.get_level_values("metric")))
+            if not metric == "confused_with"
+        ]
         if not metrics_to_diff:
-            metrics_to_diff = list(set(df.columns.get_level_values("metric")))
+            metrics_to_diff = all_numeric_metrics
+        else:
+            try:
+                assert all(
+                    [metric in all_numeric_metrics for metric in metrics_to_diff]
+                )
+            except AssertionError:
+                logger.error(
+                    f"ERROR: You have specified an invalid metric to diff by. "
+                    f"Valid metrics for these reports are {all_numeric_metrics}. "
+                    f"You specified {metrics_to_diff}"
+                )
+                raise
 
         def diff_from_base(x):
             metric = x.name[0]
-            if metric == "confused_with":
-                difference = pd.Series(None, index=x.index, dtype="float64")
-                return difference
             try:
                 base_result = df[(metric, base_result_set_name)]
             except KeyError:
@@ -168,12 +187,7 @@ class ResultSetDiffDf(ResultSetDf):
             return difference
 
         diff_df = cls(df[metrics_to_diff].apply(diff_from_base))
-        diff_df.drop(columns=base_result_set_name, level=1, inplace=True)
-        diff_df.drop_non_numeric_metrics()
-        diff_df.rename(
-            lambda col: f"({col} - {base_result_set_name})",
-            axis=1,
-            level=1,
-            inplace=True,
-        )
-        return cls(diff_df)
+        diff_df.clean(base_result_set_name=base_result_set_name)
+        diff_df.name_diff_cols(base_result_set_name=base_result_set_name)
+
+        return diff_df

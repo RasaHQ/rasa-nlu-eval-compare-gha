@@ -38,7 +38,7 @@ jobs:
         append_table: true
         display_only_diff: true
         label_name: retrieval_intent
-        metrics_to_display: support f1-score  confused_with
+        metrics_to_display: support f1-score confused_with
         metrics_to_diff: support f1-score
         metric_to_sort_by: f1-score
 
