@@ -100,6 +100,6 @@ runs:
             --metrics_to_diff ${{ inputs.metrics_to_diff }} \
             --metrics_to_display ${{ inputs.metrics_to_display }} \
             --metric_to_sort_by "${{ inputs.metric_to_sort_by }}" \
-            "${{ steps.bool_opts.outputs.append_table }}" \
-            "${{ steps.bool_opts.outputs.display_only_diff }}" \
-            "${{ steps.bool_opts.outputs.style_table }}"
+            ${{ steps.bool_opts.outputs.append_table }} \
+            ${{ steps.bool_opts.outputs.display_only_diff }} \
+            ${{ steps.bool_opts.outputs.style_table }}
