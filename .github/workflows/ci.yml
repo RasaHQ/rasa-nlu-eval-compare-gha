@@ -24,6 +24,10 @@ jobs:
         metrics_to_diff: support f1-score
         metric_to_sort_by: support
 
+    - name: check content of file
+      run: |
+        cat compared_results.html
+
     - name: Compare Response Selection Results
       uses: ./
       with:
@@ -38,6 +42,10 @@ jobs:
         metrics_to_diff: support f1-score
         metric_to_sort_by: f1-score
 
+    - name: check content of file
+      run: |
+        cat compared_results.html
+
     - name: Compare Entity Results and Append
       uses: ./
       with:
@@ -51,6 +59,10 @@ jobs:
         metrics_to_display: support f1-score precision recall
         metrics_to_diff: support f1-score precision recall
         metric_to_sort_by: support
+
+    - name: check content of file
+      run: |
+        cat compared_results.html
 
     - name: Post cross-val comparison to PR
       uses: amn41/comment-on-pr@comment-file-contents
