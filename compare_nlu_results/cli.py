@@ -1,10 +1,10 @@
 import argparse
 import logging
-from unittest import result
 
 from compare_nlu_results.results import NamedResultFile
 
 logger = logging.getLogger(__file__)
+
 
 class parse_nlu_result_files(argparse.Action):
     def __call__(self, parser, args, values, option_string=None):
@@ -14,6 +14,7 @@ class parse_nlu_result_files(argparse.Action):
             for filepath, name in result_file_pairs
         ]
         setattr(args, self.dest, nlu_result_files)
+
 
 def parse_cli_arg_pair(input_string):
     """
@@ -29,8 +30,10 @@ def parse_cli_arg_pair(input_string):
         assert len(items) == 2
     except AssertionError:
         logger.error(
-            f"ERROR: argument '{input_string}' is not parseable. When passing key-value command line arguments, "
-            f"separate key and value with = and surround values with spaces with quotes. "
+            f"ERROR: argument '{input_string}' is not parseable. "
+            f"When passing key-value command line arguments, "
+            f"separate key and value with = and "
+            f"surround values with spaces with quotes. "
             f'e.g. --cli_flag key=value key2="value 2"'
         )
         exit()
@@ -93,14 +96,14 @@ def create_argument_parser() -> argparse.ArgumentParser:
         "--metrics_to_diff",
         help=("Metrics to consider when determining changes across result sets."),
         nargs="+",
-        required=False
+        required=False,
     )
 
     parser.add_argument(
         "--metrics_to_display",
         help=("Metrics to display in resulting HTML table."),
         nargs="+",
-        required=False
+        required=False,
     )
 
     parser.add_argument(

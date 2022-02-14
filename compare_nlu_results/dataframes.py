@@ -1,4 +1,3 @@
-from email.mime import base
 import logging
 from typing import List, Optional, Text
 
@@ -32,16 +31,6 @@ class ResultDf(pd.DataFrame):
             try:
                 self.drop(excluded_label, inplace=True)
             except KeyError:
-                pass
-
-    def drop_non_numeric_metrics(self):
-        """
-        Drop metrics that are not numeric
-        """
-        for non_numeric_metric in ["confused_with"]:
-            try:
-                self.drop(columns=non_numeric_metric, level="metric", inplace=True)
-            except:
                 pass
 
     def set_index_names(self):
@@ -111,7 +100,7 @@ class ResultSetDf(ResultDf):
         for non_numeric_metric in ["confused_with"]:
             try:
                 self.drop(columns=non_numeric_metric, level="metric", inplace=True)
-            except:
+            except KeyError:
                 pass
 
     def set_index_names(self):
@@ -143,7 +132,7 @@ class ResultSetDiffDf(ResultSetDf):
     def clean(self, base_result_set_name: Text):
         self.drop(columns=base_result_set_name, level=1, inplace=True)
         self.drop_non_numeric_metrics()
-    
+
     def name_diff_cols(self, base_result_set_name: Text):
         self.rename(
             lambda col: f"({col} - {base_result_set_name})",
@@ -159,16 +148,29 @@ class ResultSetDiffDf(ResultSetDf):
         base_result_set_name: Text,
         metrics_to_diff: Optional[List[Text]] = None,
     ) -> "ResultSetDf":
-        """Initialize Dataframe of differences in each metric across result sets from undiffed dataframe."""
+        """
+        Initialize Dataframe of differences in each metric
+        across result sets from undiffed dataframe.
+        """
 
-        all_numeric_metrics = [metric for metric in list(set(df.columns.get_level_values("metric"))) if not metric=="confused_with"]
+        all_numeric_metrics = [
+            metric
+            for metric in list(set(df.columns.get_level_values("metric")))
+            if not metric == "confused_with"
+        ]
         if not metrics_to_diff:
             metrics_to_diff = all_numeric_metrics
         else:
             try:
-                assert all([metric in all_numeric_metrics for metric in metrics_to_diff])
+                assert all(
+                    [metric in all_numeric_metrics for metric in metrics_to_diff]
+                )
             except AssertionError:
-                logger.error(f"ERROR: You have specified an invalid metric to diff by. Valid metrics for these reports are {all_numeric_metrics}. You specified {metrics_to_diff}")
+                logger.error(
+                    f"ERROR: You have specified an invalid metric to diff by. "
+                    f"Valid metrics for these reports are {all_numeric_metrics}. "
+                    f"You specified {metrics_to_diff}"
+                )
                 raise
 
         def diff_from_base(x):

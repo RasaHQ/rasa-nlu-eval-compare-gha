@@ -8,6 +8,7 @@ from compare_nlu_results.dataframes import ResultDf, ResultSetDf, ResultSetDiffD
 
 logger = logging.getLogger(__file__)
 
+
 class NamedResultFile(NamedTuple):
     """Holds a filepath and the name associated with it."""
 
@@ -98,13 +99,11 @@ class EvaluationResultSet(EvaluationResult):
             EvaluationResult(
                 json_report_filepath=result_file.filepath,
                 name=result_file.name,
-                label_name=label_name
+                label_name=label_name,
             )
             for result_file in nlu_result_files
         ]
-        combined_results = cls(
-            result_sets=result_sets, label_name=label_name
-        )
+        combined_results = cls(result_sets=result_sets, label_name=label_name)
         return combined_results
 
     def validate_unique_result_set_names(self):
@@ -112,7 +111,10 @@ class EvaluationResultSet(EvaluationResult):
         try:
             assert len(result_set_names) == len(set(result_set_names))
         except AssertionError:
-            logger.error(f"ERROR: Result set names must be unique. Names {result_set_names} are not unique.")
+            logger.error(
+                f"ERROR: Result set names must be unique. "
+                f"Names {result_set_names} are not unique."
+            )
             raise
 
     def convert_result_sets_to_df(self) -> ResultSetDf:
@@ -168,12 +170,9 @@ class EvaluationResultSet(EvaluationResult):
             result_sets.append(result)
         return result_sets
 
-    def get_diffs_between_sets(self, metrics_to_diff: Optional[List[Text]]=None):
+    def get_diffs_between_sets(self, metrics_to_diff: Optional[List[Text]] = None):
         base_result_set_name = self.result_sets[0].name
         diff_df = ResultSetDiffDf.from_df(
             self.df, base_result_set_name, metrics_to_diff
         )
         return diff_df
-
-
-
