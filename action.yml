@@ -1,0 +1,100 @@
+name: 'Rasa NLU Evaluation Results Comparison'
+description: 'A GitHub action to compare Rasa NLU Evaluation results'
+inputs:
+  nlu_result_files:
+    description: |
+      The json report files that should be compared and the labels to associate with each of them. The report from which
+      diffs should be calculated should be listed first. All results must be of the same type (e.g. intent classification,
+      entity extraction). Labels for files should be unique.For example: `intent_report.json=1 second_intent_report.json=2`. Do
+      not put spaces before or after the = sign. Label values with spaces should be put in double quotes. For example:
+      `previous_results/DIETClassifier_report.json="Previous Stable Results" current_results/DIETClassifier_report.json="New
+      Results"`
+    required: true
+  json_outfile:
+    description: File to which to write combined json report (contents of all result files).
+    required: false
+    default: combined_results.json
+  html_outfile:
+    description: File to which to write HTML table. File will be overwritten unless `append_table` is specified.
+    required: false
+    default: formatted_compared_results.html
+  table_title:
+    description: Title of HTML table.
+    required: false
+  label_name:
+    description: Type of labels predicted in the provided NLU result files e.g. 'intent', 'entity', 'retrieval intent'.
+    required: false
+  metrics_to_diff:
+    description: Metrics to consider when determining changes across result sets.
+    required: false
+  metrics_to_display:
+    description: Metrics to display in resulting HTML table.
+    required: false
+  metric_to_sort_by:
+    description: Metrics to sort by (descending) in resulting HTML table.
+    required: false
+  display_only_diff:
+    description: |
+      Display only labels with a change in at least one metric from the first listed result set. Default is false.
+    required: false
+  append_table:
+    description: |
+      Whether to append the comparison table to the html output file, instead of overwriting it. 
+      If `true` not specified, html_outfile will be overwritten.
+    required: false
+  style_table:
+    description: |
+      Whether to add CSS style tags to the html table to highlight changed values. 
+      Not compatible with Github Markdown format. Set to `true` to use.
+    required: false
+
+branding:
+  icon: 'message-square'  
+  color: 'blue'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.8'
+    - name: Install dependencies
+      run: |
+        pip install -r "${{ github.action_path }}"/requirements.txt
+      shell: bash
+    - name: Set boolean options
+      id: bool_opts
+      run: |
+        case "$(tr "[:upper:]" "[:lower:]" <<< "${{ inputs.append_table }}")" in
+            "true") echo "::set-output name=append_table::--append_table" ;;
+            *) echo "::set-output name=append_table::";;
+        esac
+
+        case "$(tr "[:upper:]" "[:lower:]" <<< "${{ inputs.display_only_diff }}")" in
+            "true") echo "::set-output name=display_only_diff::--display_only_diff" ;;
+            *) echo "::set-output name=display_only_diff::";;
+        esac
+
+        case "$(tr "[:upper:]" "[:lower:]" <<< "${{ inputs.style_table }}")" in
+            "true") echo "::set-output name=style_table::--style_table" ;;
+            *) echo "::set-output name=style_table::";;
+        esac
+
+      shell: bash
+    - name: Run Result Comparison
+      shell: bash
+      run: |
+        export PYTHONPATH=$PYTHONPATH:${{ github.action_path }}
+        python -m compare_nlu_results \
+            --nlu_result_files ${{ inputs.nlu_result_files }} \
+            --table_title "${{ inputs.table_title }}" \
+            --label_name "${{ inputs.label_name }}" \
+            --html_outfile "${{ inputs.html_outfile }}" \
+            --json_outfile "${{ inputs.json_outfile }}" \
+            --metrics_to_diff ${{ inputs.metrics_to_diff }} \
+            --metrics_to_display ${{ inputs.metrics_to_display }} \
+            --metric_to_sort_by "${{ inputs.metric_to_sort_by }}" \
+            ${{ steps.bool_opts.outputs.append_table }} \
+            ${{ steps.bool_opts.outputs.display_only_diff }} \
+            ${{ steps.bool_opts.outputs.style_table }}
