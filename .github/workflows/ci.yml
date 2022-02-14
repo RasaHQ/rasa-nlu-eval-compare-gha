@@ -14,7 +14,7 @@ jobs:
     - name: Compare Intent Results
       uses: ./
       with:
-        nlu_result_files: tests/data/results1/intent_report.json="1" tests/data/results2/intent_report.json="2"
+        nlu_result_files: tests/data/results1/intent_report.json="old" tests/data/results2/intent_report.json="new"
         table_title: Intent Classification Results
         json_outfile: compared_intent_classification.json
         html_outfile: compared_results.html
@@ -23,14 +23,10 @@ jobs:
         metrics_to_diff: support f1-score
         metric_to_sort_by: support
 
-    - name: check content of file
-      run: |
-        cat compared_results.html
-
     - name: Compare Response Selection Results
       uses: ./
       with:
-        nlu_result_files: tests/data/results1/response_selection_report.json="1" tests/data/results2/response_selection_report.json="2"
+        nlu_result_files: tests/data/results1/response_selection_report.json="old" tests/data/results2/response_selection_report.json="new"
         table_title: Response Selection Results
         json_outfile: compared_response_selection_report.json
         html_outfile: compared_results.html
@@ -41,14 +37,10 @@ jobs:
         metrics_to_diff: support f1-score
         metric_to_sort_by: f1-score
 
-    - name: check content of file
-      run: |
-        cat compared_results.html
-
     - name: Compare Entity Results and Append
       uses: ./
       with:
-        nlu_result_files: tests/data/results1/DIETClassifier_report.json="1" tests/data/results2/DIETClassifier_report.json="2"
+        nlu_result_files: tests/data/results1/DIETClassifier_report.json="old" tests/data/results2/DIETClassifier_report.json="new"
         table_title: Entity Classification Results
         json_outfile: compared_DIETClassifier.json
         html_outfile: compared_results.html
@@ -58,10 +50,6 @@ jobs:
         metrics_to_display: support f1-score precision recall
         metrics_to_diff: support f1-score precision recall
         metric_to_sort_by: support
-
-    - name: check content of file
-      run: |
-        cat compared_results.html
 
     - name: Post cross-val comparison to PR
       uses: amn41/comment-on-pr@comment-file-contents
