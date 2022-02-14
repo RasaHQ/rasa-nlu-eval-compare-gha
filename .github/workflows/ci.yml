@@ -18,7 +18,6 @@ jobs:
         table_title: Intent Classification Results
         json_outfile: compared_intent_classification.json
         html_outfile: compared_results.html
-        append_table: true
         label_name: intent
         metrics_to_display: support f1-score
         metrics_to_diff: support f1-score
