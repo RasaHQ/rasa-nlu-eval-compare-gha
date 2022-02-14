@@ -1,7 +1,6 @@
 import logging
 from typing import List, Text, Optional
 
-from compare_nlu_results.dataframes import ResultSetDiffDf
 from compare_nlu_results.results import NamedResultFile, EvaluationResultSet
 from compare_nlu_results.tables import ResultSetDiffTable
 from compare_nlu_results import cli
