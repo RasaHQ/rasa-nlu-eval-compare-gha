@@ -73,17 +73,17 @@ runs:
       run: |
         case "$(tr "[:upper:]" "[:lower:]" <<< "${{ inputs.append_table }}")" in
             "true") echo "::set-output name=append_table::--append_table" ;;
-            *) echo "::set-output name=append_table::''";;
+            *) echo "::set-output name=append_table::";;
         esac
 
         case "$(tr "[:upper:]" "[:lower:]" <<< "${{ inputs.display_only_diff }}")" in
             "true") echo "::set-output name=display_only_diff::--display_only_diff" ;;
-            *) echo "::set-output name=display_only_diff::''";;
+            *) echo "::set-output name=display_only_diff::";;
         esac
 
         case "$(tr "[:upper:]" "[:lower:]" <<< "${{ inputs.style_table }}")" in
             "true") echo "::set-output name=style_table::--style_table" ;;
-            *) echo "::set-output name=style_table::''";;
+            *) echo "::set-output name=style_table::";;
         esac
 
       shell: bash
