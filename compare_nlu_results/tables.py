@@ -138,9 +138,18 @@ class ResultSetDiffTable(ResultSetTable):
         sorted_labels = result_set_df.get_sorted_labels(
             metric_to_sort_by=metric_to_sort_by, labels=labels
         )
+
+        all_metrics = set(result_set_df.columns.get_level_values(0))
         if not metrics_to_display:
             metrics_order = {metric: ix for ix, metric in enumerate(result_set_df.columns.get_level_values(0))}
-            metrics_to_display = sorted(list(set(result_set_df.columns.get_level_values(0))), key=lambda x: metrics_order[x])
+            metrics_to_display = sorted(list(all_metrics), key=lambda x: metrics_order[x])
+        else:
+            try:
+                assert all([metric in all_metrics for metric in metrics_to_display])
+            except AssertionError:
+                logger.error(f"ERROR: You have specified a metric to display that does not exist. Valid metrics for these reports are {all_metrics}. You specified {metrics_to_display}")
+                raise
+
         self.metrics_to_display = metrics_to_display
         self.df = pd.concat([result_set_df, diff_df], axis=1).loc[sorted_labels, self.metrics_to_display]
         self.diff_columns = [col for col in diff_df.columns.tolist() if col in self.df.columns]

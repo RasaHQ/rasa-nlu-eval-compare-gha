@@ -191,9 +191,9 @@ You can set the following options using [`with`](https://docs.github.com/en/acti
 | `html_outfile`            | File to which to write HTML table. File will be overwritten unless `append_table` is specified. | formatted_compared_results.html |
 | `table_title`             | Title of HTML table. | Compared NLU Evaluation Results |
 | `label_name`              | Type of labels predicted in the provided NLU result files e.g. 'intent', 'entity', 'retrieval intent'. | label |
-| `metrics_to_diff`         | Space-separated list of metrics to consider when determining changes across result sets. Valid values are support, f1-score, precision, and recall. | All numeric metrics found in input reports |
-| `metrics_to_display`         | Space-separated list of metrics to display in resulting HTML table. Valid values are support, f1-score, precision, recall, and confused_with (for intent classification and response selection only). | All metrics found in input reports |
-| `metric_to_sort_by`       | Metrics to sort by (descending) in resulting HTML table. | support |
+| `metrics_to_diff`         | Space-separated list of numeric metrics to consider when determining changes across result sets e.g. "support, f1-score". | All numeric metrics found in input reports |
+| `metrics_to_display`         | Space-separated list of metrics to display in resulting HTML table e.g. "support, f1-score, confused_with" | All metrics found in input reports |
+| `metric_to_sort_by`       | Metrics to sort by (descending) in resulting HTML table. | `support` |
 | `display_only_diff`       | Display only labels (e.g. intents or entities) where there is a difference in at least one of the `metrics_to_diff` between the first listed result set and the other result set(s). Set to `true` to use. | |
 | `append_table`            | Whether to append the comparison table to the html output file, instead of overwriting it. If not specified, html_outfile will be overwritten. Set to `true` to use. | |
 | `style_table`            | Whether to add CSS style tags to the html table to highlight changed values. Not compatible with Github Markdown format. Set to `true` to use. | |

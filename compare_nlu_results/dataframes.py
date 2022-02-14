@@ -36,7 +36,7 @@ class ResultDf(pd.DataFrame):
 
     def drop_non_numeric_metrics(self):
         """
-        Drop metrics that are not numeric i.e. `confused_with` in intent reports.
+        Drop metrics that are not numeric
         """
         for non_numeric_metric in ["confused_with"]:
             try:
@@ -56,7 +56,6 @@ class ResultDf(pd.DataFrame):
     def drop_non_numeric_metrics(self):
         """
         Drop metrics that are not numeric
-        i.e. `confused_with` in intent reports.
         """
         for non_numeric_metric in ["confused_with"]:
             try:
@@ -107,7 +106,7 @@ class ResultSetDf(ResultDf):
 
     def drop_non_numeric_metrics(self):
         """
-        Drop metrics that are not numeric i.e. `confused_with` in intent reports.
+        Drop metrics that are not numeric
         """
         for non_numeric_metric in ["confused_with"]:
             try:
@@ -161,14 +160,19 @@ class ResultSetDiffDf(ResultSetDf):
         metrics_to_diff: Optional[List[Text]] = None,
     ) -> "ResultSetDf":
         """Initialize Dataframe of differences in each metric across result sets from undiffed dataframe."""
+
+        all_numeric_metrics = [metric for metric in list(set(df.columns.get_level_values("metric"))) if not metric=="confused_with"]
         if not metrics_to_diff:
-            metrics_to_diff = list(set(df.columns.get_level_values("metric")))
+            metrics_to_diff = all_numeric_metrics
+        else:
+            try:
+                assert all([metric in all_numeric_metrics for metric in metrics_to_diff])
+            except AssertionError:
+                logger.error(f"ERROR: You have specified an invalid metric to diff by. Valid metrics for these reports are {all_numeric_metrics}. You specified {metrics_to_diff}")
+                raise
 
         def diff_from_base(x):
             metric = x.name[0]
-            if metric == "confused_with":
-                difference = pd.Series(None, index=x.index, dtype="float64")
-                return difference
             try:
                 base_result = df[(metric, base_result_set_name)]
             except KeyError:
