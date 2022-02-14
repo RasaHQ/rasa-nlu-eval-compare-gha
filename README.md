@@ -4,18 +4,15 @@ This repository contains code to combine and compare multiple sets of Rasa NLU e
 
 This Github action compares multiple sets of Rasa NLU evaluation results. It runs the command `python -m compare_nlu_results` with the [input arguments](#input-arguments) provided to it.
 
-It outputs a formatted HTML table of the compared results and a json report of all result sets combined. 
+It outputs an html file with a formatted table of the compared results. 
 For example:
 
-<body>Only averages and the entity(s) that show differences in at least one of the following metrics: ['precision', 'f1-score', 'support', 'recall'] are displayed.</body><table border="1" class="dataframe">
+<table border="1" class="dataframe">
   <thead>
     <tr>
       <th>metric</th>
       <th colspan="3" halign="left">precision</th>
       <th colspan="3" halign="left">recall</th>
-      <th colspan="3" halign="left">f1-score</th>
-      <th colspan="3" halign="left">support</th>
-      <th colspan="2" halign="left">confused_with</th>
     </tr>
     <tr>
       <th>result_set</th>
@@ -25,25 +22,9 @@ For example:
       <th>old</th>
       <th>new</th>
       <th>(new - old)</th>
-      <th>old</th>
-      <th>new</th>
-      <th>(new - old)</th>
-      <th>old</th>
-      <th>new</th>
-      <th>(new - old)</th>
-      <th>old</th>
-      <th>new</th>
     </tr>
     <tr>
       <th>entity</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
       <th></th>
       <th></th>
       <th></th>
@@ -61,14 +42,6 @@ For example:
       <td>0.999334</td>
       <td>0.998668</td>
       <td>-0.000666</td>
-      <td>0.997011</td>
-      <td>0.998336</td>
-      <td>0.001325</td>
-      <td>1502.0</td>
-      <td>1502.0</td>
-      <td>0</td>
-      <td>N/A</td>
-      <td>N/A</td>
     </tr>
     <tr>
       <th>macro avg</th>
@@ -78,14 +51,6 @@ For example:
       <td>0.998967</td>
       <td>0.994012</td>
       <td>-0.004955</td>
-      <td>0.998426</td>
-      <td>0.996268</td>
-      <td>-0.002159</td>
-      <td>1502.0</td>
-      <td>1502.0</td>
-      <td>0</td>
-      <td>N/A</td>
-      <td>N/A</td>
     </tr>
     <tr>
       <th>weighted avg</th>
@@ -95,14 +60,6 @@ For example:
       <td>0.999334</td>
       <td>0.998668</td>
       <td>-0.000666</td>
-      <td>0.997017</td>
-      <td>0.998329</td>
-      <td>0.001312</td>
-      <td>1502.0</td>
-      <td>1502.0</td>
-      <td>0</td>
-      <td>N/A</td>
-      <td>N/A</td>
     </tr>
     <tr>
       <th>product</th>
@@ -112,14 +69,6 @@ For example:
       <td>1.0</td>
       <td>1.0</td>
       <td>0.0</td>
-      <td>0.994614</td>
-      <td>0.999098</td>
-      <td>0.004484</td>
-      <td>554</td>
-      <td>554</td>
-      <td>0</td>
-      <td>{}</td>
-      <td>{}</td>
     </tr>
     <tr>
       <th>language</th>
@@ -129,14 +78,6 @@ For example:
       <td>1.0</td>
       <td>0.996633</td>
       <td>-0.003367</td>
-      <td>1.0</td>
-      <td>0.998314</td>
-      <td>-0.001686</td>
-      <td>297</td>
-      <td>297</td>
-      <td>0</td>
-      <td>{}</td>
-      <td>{}</td>
     </tr>
     <tr>
       <th>company</th>
@@ -146,35 +87,11 @@ For example:
       <td>0.988636</td>
       <td>1.0</td>
       <td>0.011364</td>
-      <td>0.994286</td>
-      <td>1.0</td>
-      <td>0.005714</td>
-      <td>88</td>
-      <td>88</td>
-      <td>0</td>
-      <td>{}</td>
-      <td>{}</td>
-    </tr>
-    <tr>
-      <th>entity</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>0.9375</td>
-      <td>-0.0625</td>
-      <td>1.0</td>
-      <td>0.967742</td>
-      <td>-0.032258</td>
-      <td>16</td>
-      <td>16</td>
-      <td>0</td>
-      <td>{}</td>
-      <td>{}</td>
     </tr>
   </tbody>
 </table>
 
+It also outputs a json report of all result sets combined.
 
 You can find more information about Rasa NLU evaluation in [the Rasa Open Source docs](https://rasa.com/docs/rasa/testing-your-assistant#comparing-nlu-performance).
 
