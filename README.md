@@ -1,10 +1,17 @@
 # Rasa NLU Evaluation Result Comparison
-This repository contains code to combine and compare multiple sets of Rasa NLU evaluation results. It can be used locally or as a Github Action.
+This repository contains code to compare multiple sets of Rasa NLU evaluation results. It can be used locally or as a Github Action.
 ## Use as a Github Action
 
-This Github action compares multiple sets of Rasa NLU evaluation results. It runs the command `python -m compare_nlu_results` with the [input arguments](#input-arguments) provided to it.
+This Github action compares NLU evaluation results using the command `python -m compare_nlu_results` with the [input arguments](#input-arguments) provided to it.
 
-It outputs an html file with a formatted table of the compared results. 
+You can find more information about Rasa NLU evaluation in [the Rasa Open Source docs](https://rasa.com/docs/rasa/testing-your-assistant#comparing-nlu-performance).
+
+### Action Output
+
+There are no output parameters returned by this Github Action, however two files are written:
+
+It writes a json report of all result sets combined to `json_outfile`.
+It writes a formatted table of the compared results to `html_outfile`. 
 For example:
 
 <table border="1" class="dataframe">
@@ -91,10 +98,6 @@ For example:
   </tbody>
 </table>
 
-It also outputs a json report of all result sets combined.
-
-You can find more information about Rasa NLU evaluation in [the Rasa Open Source docs](https://rasa.com/docs/rasa/testing-your-assistant#comparing-nlu-performance).
-
 ### Input arguments
 
 You can set the following options using [`with`](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstepswith) in the step running this action. **The `nlu_result_files` argument is required.**
@@ -114,10 +117,7 @@ You can set the following options using [`with`](https://docs.github.com/en/acti
 | `display_only_diff`       | Display only labels (e.g. intents or entities) where there is a difference in at least one of the `metrics_to_diff` between the first listed result set and the other result set(s). Set to `true` to use. | |
 | `append_table`            | Whether to append the comparison table to the html output file, instead of overwriting it. If not specified, html_outfile will be overwritten. Set to `true` to use. | |
 | `style_table`            | Whether to add CSS style tags to the html table to highlight changed values. Not compatible with Github Markdown format. Set to `true` to use. | |
-## Outputs
 
-There are no output parameters returned by this Github Action. 
-Two files are written to the filepaths specified by the inputs `json_outfile` and `html_outfile`.
 
 ### Example Usage
 
