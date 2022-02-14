@@ -1,3 +1,4 @@
+from email.mime import base
 import logging
 from typing import List, Optional, Text
 
@@ -140,6 +141,18 @@ class ResultSetDiffDf(ResultSetDf):
         df_with_only_changes = self[self.apply(lambda x: x.any(), axis=1)]
         return df_with_only_changes.index.values.tolist()
 
+    def clean(self, base_result_set_name: Text):
+        self.drop(columns=base_result_set_name, level=1, inplace=True)
+        self.drop_non_numeric_metrics()
+    
+    def name_diff_cols(self, base_result_set_name: Text):
+        self.rename(
+            lambda col: f"({col} - {base_result_set_name})",
+            axis=1,
+            level=1,
+            inplace=True,
+        )
+
     @classmethod
     def from_df(
         cls,
@@ -168,12 +181,7 @@ class ResultSetDiffDf(ResultSetDf):
             return difference
 
         diff_df = cls(df[metrics_to_diff].apply(diff_from_base))
-        diff_df.drop(columns=base_result_set_name, level=1, inplace=True)
-        diff_df.drop_non_numeric_metrics()
-        diff_df.rename(
-            lambda col: f"({col} - {base_result_set_name})",
-            axis=1,
-            level=1,
-            inplace=True,
-        )
-        return cls(diff_df)
+        diff_df.clean(base_result_set_name=base_result_set_name)
+        diff_df.name_diff_cols(base_result_set_name=base_result_set_name)
+
+        return diff_df

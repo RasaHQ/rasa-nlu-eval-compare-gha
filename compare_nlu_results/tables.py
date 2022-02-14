@@ -15,6 +15,7 @@ class ResultTable:
         metric_to_sort_by: Text,
         metrics_to_display: Optional[List[Text]] = None,
         labels: Optional[List[Text]] = None,
+        title: Optional[Text] = "NLU Evaluation Results"
     ):
         sorted_labels = df.get_sorted_labels(
             metric_to_sort_by=metric_to_sort_by, labels=labels
@@ -23,6 +24,7 @@ class ResultTable:
             metrics_to_display = df.columns
         self.df = df.loc[sorted_labels, metrics_to_display]
         self.df = df
+        self.title = title
 
     def style_table(self) -> pd.DataFrame.style:
         borders = {
@@ -80,7 +82,13 @@ class ResultTable:
             },
         )
 
-
+    def write_to_file(self, html_outfile: Text, append_table: bool=False, style_table: bool=False):
+        mode = "w+"
+        if append_table:
+            mode = "a+"
+        with open(html_outfile, mode) as fh:
+            fh.write(f"<h1>{self.title}</h1>")
+            fh.write(self.get_table(styled=style_table))
 class ResultSetTable(ResultTable):
     def __init__(
         self,
@@ -115,11 +123,17 @@ class ResultSetDiffTable(ResultSetTable):
         diff_df: ResultSetDiffDf,
         metric_to_sort_by: Text,
         metrics_to_display: Optional[List[Text]] = None,
+        metrics_to_diff: Optional[List[Text]] = None,
         display_only_diff: bool = False,
-        diff_columns: Optional[List[Any]] = None,
+        title: Optional[Text] = "Compared NLU Evaluation Results",
+        label_name: Optional[Text] = "label"
     ):
+        self.display_only_diff = display_only_diff
+        self.title = title
+        self.label_name = label_name
+        self.metrics_to_diff = metrics_to_diff
         labels = None
-        if display_only_diff:
+        if self.display_only_diff:
             labels = diff_df.find_labels_with_changes()
         sorted_labels = result_set_df.get_sorted_labels(
             metric_to_sort_by=metric_to_sort_by, labels=labels
@@ -128,8 +142,7 @@ class ResultSetDiffTable(ResultSetTable):
             metrics_to_display = result_set_df.columns.get_level_values(0)
         self.df = pd.concat([result_set_df, diff_df], axis=1).loc[sorted_labels, metrics_to_display]
 
-        if not diff_columns:
-            diff_columns = []
+        diff_columns = diff_df.columns.tolist()
         diff_columns_in_table = [col for col in diff_columns if col in self.df.columns]
         self.diff_columns = diff_columns_in_table
 
@@ -146,3 +159,17 @@ class ResultSetDiffTable(ResultSetTable):
         styler.applymap(style_positive, subset=self.diff_columns)
 
         return styler
+
+    def write_to_file(self, html_outfile: Text, append_table: bool=False, style_table: bool=False):
+        mode = "w+"
+        if append_table:
+            mode = "a+"
+        with open(html_outfile, mode) as fh:
+            fh.write(f"<h1>{self.title}</h1>")
+            if self.display_only_diff:
+                fh.write(
+                    f"<body>Only averages and the {self.label_name}(s) that show "
+                    f"differences in at least one of the following metrics: "
+                    f"{self.metrics_to_diff} are displayed.</body>"
+                )
+            fh.write(self.get_table(styled=style_table))
