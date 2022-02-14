@@ -170,8 +170,13 @@ class EvaluationResultSet(EvaluationResult):
             result_sets.append(result)
         return result_sets
 
-    def get_diffs_between_sets(self, metrics_to_diff: Optional[List[Text]] = None):
-        base_result_set_name = self.result_sets[0].name
+    def get_diffs_between_sets(
+        self,
+        metrics_to_diff: Optional[List[Text]] = None,
+        base_result_set_name: Optional[Text] = None,
+    ):
+        if not base_result_set_name:
+            base_result_set_name = self.result_sets[0].name
         diff_df = ResultSetDiffDf.from_df(
             self.df, base_result_set_name, metrics_to_diff
         )
